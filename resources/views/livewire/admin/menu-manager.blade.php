@@ -26,11 +26,15 @@
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Category</label>
-                        <select wire:model="category_id" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="">Select Category</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
+                        <select wire:model="category_id" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm {{ $categories->isEmpty() ? 'bg-gray-100 cursor-not-allowed' : '' }}" {{ $categories->isEmpty() ? 'disabled' : '' }}>
+                            @if($categories->isEmpty())
+                                <option value="">No categories available - Please create one first</option>
+                            @else
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            @endif
                         </select>
                         @error('category_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>

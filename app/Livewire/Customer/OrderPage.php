@@ -36,9 +36,6 @@ class OrderPage extends Component
         }
 
         $this->categories = Category::where('is_active', true)->get();
-        if ($this->categories->count() > 0) {
-            $this->activeCategoryId = $this->categories->first()->id;
-        }
 
         $this->loadMenus();
     }

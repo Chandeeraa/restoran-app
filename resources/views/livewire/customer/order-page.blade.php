@@ -42,9 +42,13 @@
         <div class="bg-white border-b border-gray-100 sticky top-[72px] z-30 overflow-x-auto no-scrollbar shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex space-x-2 py-4">
+                    <button wire:click="setActiveCategory(null)" 
+                        class="whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 {{ is_null($activeCategoryId) ? 'bg-indigo-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        Semua Menu
+                    </button>
                     @foreach($categories as $category)
                         <button wire:click="setActiveCategory({{ $category->id }})" 
-                            class="whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 {{ $activeCategoryId == $category->id ? 'bg-indigo-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                            class="whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 {{ $activeCategoryId === $category->id ? 'bg-indigo-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                             {{ $category->name }}
                         </button>
                     @endforeach

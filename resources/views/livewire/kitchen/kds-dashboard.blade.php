@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium {{ $order->status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700' }}">
-                                        {{ ucfirst($order->status) }}
+                                        {{ $order->status === 'cooking' ? 'Cooking' : ucfirst($order->status) }}
                                     </span>
                                     <div class="text-xs text-gray-500 mt-1">
                                         {{ $order->created_at->diffForHumans() }}
@@ -82,12 +82,12 @@
 
                         <div class="p-4 border-t border-gray-100 bg-gray-50">
                             @if($order->status === 'pending')
-                                <button wire:click="updateStatus({{ $order->id }}, 'preparing')" 
+                                <button wire:click="updateStatus({{ $order->id }}, 'cooking')" 
                                         class="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Start Preparing
+                                    Start Cooking
                                 </button>
-                            @elseif($order->status === 'preparing')
+                            @elseif($order->status === 'cooking')
                                 <button wire:click="updateStatus({{ $order->id }}, 'ready')" 
                                         class="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors shadow-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
