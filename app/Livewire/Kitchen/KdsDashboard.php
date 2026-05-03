@@ -30,6 +30,8 @@ class KdsDashboard extends Component
     {
         // Reload orders when a new order is placed
         $this->loadOrders();
+        // Trigger browser sound notification
+        $this->dispatch('new-order-sound');
     }
     
     #[On('echo:kitchen-kds,OrderStatusUpdated')]

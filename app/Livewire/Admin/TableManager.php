@@ -14,6 +14,9 @@ class TableManager extends Component
     public $status = 'available';
     public $tableId = null;
     public $isEditMode = false;
+    public $showQrModal = false;
+    public $selectedTableQr = null;
+    public $selectedTableNumber = '';
 
     public function store()
     {
@@ -74,6 +77,21 @@ class TableManager extends Component
         $this->status = 'available';
         $this->tableId = null;
         $this->isEditMode = false;
+    }
+
+    public function openQrModal($id)
+    {
+        $table = Table::findOrFail($id);
+        $this->selectedTableQr = $table->qr_code;
+        $this->selectedTableNumber = $table->table_number;
+        $this->showQrModal = true;
+    }
+
+    public function closeQrModal()
+    {
+        $this->showQrModal = false;
+        $this->selectedTableQr = null;
+        $this->selectedTableNumber = '';
     }
 
     public function render()

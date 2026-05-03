@@ -21,9 +21,13 @@ class OrderPage extends Component
     public $cart = [];
     public $showCart = false;
     public $orderType = 'dine-in';
+    public $customer_name = '';
+    public $tables = [];
 
     public function mount()
     {
+        $this->tables = Table::where('status', 'available')->get();
+
         if (request()->has('table')) {
             $table = Table::find(request()->query('table'));
             if ($table) {
@@ -72,8 +76,6 @@ class OrderPage extends Component
                 'notes' => '',
             ];
         }
-        
-        $this->showCart = true;
     }
 
     public function increaseQuantity($menuId)
@@ -122,13 +124,24 @@ class OrderPage extends Component
     {
         if (empty($this->cart)) return;
 
+        if (empty(trim($this->customer_name))) {
+            $this->addError('customer_name', 'Nama pemesan wajib diisi.');
+            return;
+        }
+
+        if ($this->orderType === 'dine-in' && empty($this->table_id)) {
+            $this->addError('table_id', 'Silakan pilih nomor meja Anda terlebih dahulu.');
+            return;
+        }
+
         $order = Order::create([
-            'table_id' => $this->table_id,
-            'order_number' => 'ORD-' . strtoupper(Str::random(8)),
-            'order_type' => $this->orderType,
-            'status' => 'pending',
-            'total_price' => $this->cartTotal,
-            'payment_status' => 'unpaid',
+            'table_id'      => $this->table_id,
+            'order_number'  => 'ORD-' . strtoupper(Str::random(8)),
+            'customer_name' => trim($this->customer_name),
+            'order_type'    => $this->orderType,
+            'status'        => 'pending',
+            'total_price'   => $this->cartTotal,
+            'payment_status'=> 'unpaid',
         ]);
 
         foreach ($this->cart as $item) {
@@ -151,7 +164,7 @@ class OrderPage extends Component
         $this->cart = [];
         $this->showCart = false;
 
-        session()->flash('success_order', 'Pesanan Anda (' . $order->order_number . ') berhasil dikirim ke dapur!');
+        return redirect()->route('customer.track', ['order_number' => $order->order_number]);
     }
 
     public function render()

@@ -14,28 +14,28 @@ class UserSeeder extends Seeder
     {
         \App\Models\User::create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
+            'email' => 'admin@app.com',
             'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
         
         \App\Models\User::create([
-            'name' => 'Kitchen User',
-            'email' => 'kitchen@example.com',
+            'name' => 'Kitchen',
+            'email' => 'kitchen@app.com',
             'password' => bcrypt('password'),
             'role' => 'kitchen',
         ]);
 
         \App\Models\User::create([
             'name' => 'Cashier User',
-            'email' => 'cashier@example.com',
+            'email' => 'cashier@app.com',
             'password' => bcrypt('password'),
             'role' => 'cashier',
         ]);
 
         \App\Models\User::create([
             'name' => 'Customer User',
-            'email' => 'customer@example.com',
+            'email' => 'customer@app.com',
             'password' => bcrypt('password'),
             'role' => 'customer',
         ]);

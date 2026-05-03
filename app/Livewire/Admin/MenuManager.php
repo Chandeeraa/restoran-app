@@ -118,7 +118,7 @@ class MenuManager extends Component
     {
         return view('livewire.admin.menu-manager', [
             'menus' => Menu::with('category')->paginate(10),
-            'categories' => Category::where('is_active', true)->get()
+            'categories' => Category::all()
         ])->layout('layouts.app');
     }
 }

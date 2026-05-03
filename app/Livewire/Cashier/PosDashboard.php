@@ -20,19 +20,50 @@ class PosDashboard extends Component
     public $change = 0;
     public $paymentError = '';
 
+    public $paymentFilter = 'all';
+    public $search = '';
+
     public function mount()
     {
+        $this->loadOrders();
+    }
+
+    public function updatedSearch()
+    {
+        $this->loadOrders();
+    }
+
+    public function setFilter($filter)
+    {
+        $this->paymentFilter = $filter;
         $this->loadOrders();
     }
 
     public function loadOrders()
     {
         // Load all active orders (not completed) or today's completed orders
-        $this->orders = Order::with('items.menu', 'table')
-            ->whereDate('created_at', today())
-            ->orWhere('status', '!=', 'completed')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Order::with('items.menu', 'table')
+            ->where(function($q) {
+                if (empty($this->search)) {
+                    $q->whereDate('created_at', today())
+                      ->orWhere('status', '!=', 'completed');
+                }
+            });
+
+        if (!empty($this->search)) {
+            $query->where(function($q) {
+                $q->where('order_number', 'like', '%' . $this->search . '%')
+                  ->orWhere('customer_name', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        if ($this->paymentFilter === 'unpaid') {
+            $query->where('payment_status', 'unpaid');
+        } elseif ($this->paymentFilter === 'paid') {
+            $query->where('payment_status', 'paid');
+        }
+
+        $this->orders = $query->orderBy('created_at', 'desc')->get();
     }
 
     #[On('echo:kitchen-kds,OrderPlaced')]
@@ -83,6 +114,13 @@ class PosDashboard extends Component
     public function processPayment()
     {
         if (!$this->selectedOrder) return;
+
+        // Re-fetch to ensure fresh status
+        $order = Order::find($this->selectedOrder->id);
+        if ($order->status === 'cancelled') {
+            $this->paymentError = 'Pesanan ini sudah dibatalkan dan tidak bisa diproses pembayarannya.';
+            return;
+        }
         
         $amount = floatval($this->amountGiven);
         $total = floatval($this->selectedOrder->total_price);
@@ -101,7 +139,7 @@ class PosDashboard extends Component
         Payment::create([
             'order_id' => $this->selectedOrder->id,
             'payment_method' => $this->paymentMethod,
-            'amount' => $amount,
+            'amount' => $total, // Always save the order total, not the amount tendered
             'status' => 'success',
         ]);
 
@@ -122,6 +160,27 @@ class PosDashboard extends Component
         $this->loadOrders();
         
         session()->flash('success', 'Pembayaran berhasil diproses!');
+    }
+
+    public function cancelOrder($orderId)
+    {
+        $order = Order::find($orderId);
+        
+        if ($order && $order->payment_status !== 'paid' && $order->status !== 'cancelled') {
+            $order->status = 'cancelled';
+            $order->save();
+
+            // Release table if dine-in
+            if ($order->order_type === 'dine-in' && $order->table_id) {
+                Table::where('id', $order->table_id)->update(['status' => 'available']);
+            }
+
+            // Broadcast the update
+            event(new \App\Events\OrderStatusUpdated($order));
+            
+            $this->loadOrders();
+            session()->flash('success', 'Pesanan ' . $order->order_number . ' berhasil dibatalkan.');
+        }
     }
 
     public function render()

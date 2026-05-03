@@ -37,8 +37,11 @@
                                 <div>
                                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Order #{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}</span>
                                     <h3 class="text-lg font-bold text-gray-900 leading-tight mt-0.5">
-                                        {{ $order->order_type === 'dine-in' ? 'Table ' . ($order->table_id ?? 'N/A') : 'Takeaway' }}
+                                        {{ $order->order_type === 'dine-in' ? 'Meja ' . ($order->table->table_number ?? 'N/A') : 'Takeaway' }}
                                     </h3>
+                                    @if($order->customer_name)
+                                        <p class="text-xs font-semibold text-indigo-600 mt-0.5">👤 {{ $order->customer_name }}</p>
+                                    @endif
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium {{ $order->status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700' }}">
@@ -101,3 +104,40 @@
         @endif
     </div>
 </div>
+
+<script>
+    // Web Audio API - plays a pleasant "ding" notification sound
+    function playNewOrderSound() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+            const playTone = (freq, startTime, duration, gain = 0.4) => {
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+                gainNode.gain.setValueAtTime(gain, startTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            };
+
+            const now = ctx.currentTime;
+            // 3-tone upward ding: C5 → E5 → G5
+            playTone(523.25, now,        0.4);
+            playTone(659.25, now + 0.18, 0.4);
+            playTone(783.99, now + 0.36, 0.6);
+        } catch (e) {
+            console.warn('Audio notification failed:', e);
+        }
+    }
+
+    // Listen for the Livewire event dispatched by KdsDashboard.php
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('new-order-sound', () => {
+            playNewOrderSound();
+        });
+    });
+</script>

@@ -35,6 +35,9 @@ new class extends Component
                     </x-nav-link>
 
                     @if(auth()->user()->role === 'admin')
+                        <x-nav-link :href="route('admin.stats')" :active="request()->routeIs('admin.stats')" wire:navigate>
+                            Statistics
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.categories')" :active="request()->routeIs('admin.categories')" wire:navigate>
                             Categories
                         </x-nav-link>
@@ -107,6 +110,9 @@ new class extends Component
             </x-responsive-nav-link>
 
             @if(auth()->user()->role === 'admin')
+                <x-responsive-nav-link :href="route('admin.stats')" :active="request()->routeIs('admin.stats')" wire:navigate>
+                    Statistics
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.categories')" :active="request()->routeIs('admin.categories')" wire:navigate>
                     Categories
                 </x-responsive-nav-link>

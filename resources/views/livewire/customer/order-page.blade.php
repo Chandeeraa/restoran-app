@@ -93,6 +93,28 @@
                 @endforelse
             </div>
         </main>
+
+        @if(count($cart) > 0)
+            <!-- Floating Bottom Cart Button -->
+            <div class="fixed bottom-0 left-0 right-0 p-4 z-40 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none pb-6">
+                <div class="max-w-md mx-auto pointer-events-auto">
+                    <button @click="showCart = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg shadow-indigo-600/30 p-4 flex items-center justify-between transition-all transform hover:scale-[1.02] active:scale-95">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-white/20 rounded-full px-3 py-1 text-sm font-bold">
+                                {{ collect($cart)->sum('quantity') }} Item
+                            </div>
+                            <span class="font-bold">Lihat Pesanan</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold">Rp {{ number_format($this->cartTotal, 0, ',', '.') }}</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        @endif
     @endif
 
     <!-- Cart Slide-over Panel -->
@@ -124,33 +146,57 @@
                             <div class="flow-root">
                                 <ul role="list" class="-my-6 divide-y divide-gray-200">
                                     @forelse($cart as $menuId => $item)
-                                        <li class="py-6 flex">
-                                            <div class="flex-shrink-0 w-20 h-20 overflow-hidden rounded-xl border border-gray-100">
-                                                @if($item['image'])
-                                                    <img src="{{ Storage::url($item['image']) }}" class="w-full h-full object-center object-cover">
-                                                @else
-                                                    <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-                                                        <svg class="h-6 w-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                    </div>
-                                                @endif
-                                            </div>
+                                        <li class="py-5 flex flex-col" wire:key="cart-item-{{ $menuId }}">
+                                            <div class="flex">
+                                                <div class="flex-shrink-0 w-20 h-20 overflow-hidden rounded-xl border border-gray-100">
+                                                    @if($item['image'])
+                                                        <img src="{{ Storage::url($item['image']) }}" class="w-full h-full object-center object-cover">
+                                                    @else
+                                                        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                                            <svg class="h-6 w-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                        </div>
+                                                    @endif
+                                                </div>
 
-                                            <div class="ml-4 flex-1 flex flex-col">
-                                                <div>
-                                                    <div class="flex justify-between text-base font-medium text-gray-900">
-                                                        <h3>{{ $item['name'] }}</h3>
-                                                        <p class="ml-4">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</p>
+                                                <div class="ml-4 flex-1 flex flex-col">
+                                                    <div>
+                                                        <div class="flex justify-between text-base font-medium text-gray-900">
+                                                            <h3>{{ $item['name'] }}</h3>
+                                                            <p class="ml-4">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</p>
+                                                        </div>
+                                                        <div class="mt-1 flex text-sm text-gray-500">
+                                                            Rp {{ number_format($item['price'], 0, ',', '.') }} / item
+                                                        </div>
                                                     </div>
-                                                    <div class="mt-1 flex text-sm text-gray-500">
-                                                        Rp {{ number_format($item['price'], 0, ',', '.') }} / item
+                                                    <div class="flex-1 flex items-center justify-between text-sm mt-3">
+                                                        <div class="flex items-center border rounded-lg border-gray-200">
+                                                            <button wire:click="decreaseQuantity({{ $menuId }})" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
+                                                            <span class="px-3 py-1 font-medium text-gray-900">{{ $item['quantity'] }}</span>
+                                                            <button wire:click="increaseQuantity({{ $menuId }})" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="flex-1 flex items-end justify-between text-sm mt-3">
-                                                    <div class="flex items-center border rounded-lg border-gray-200">
-                                                        <button wire:click="decreaseQuantity({{ $menuId }})" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
-                                                        <span class="px-3 py-1 font-medium text-gray-900">{{ $item['quantity'] }}</span>
-                                                        <button wire:click="increaseQuantity({{ $menuId }})" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                                            </div>
+
+                                            <!-- Catatan per Item -->
+                                            <div class="mt-3 ml-24" x-data="{ open: {{ !empty($item['notes']) ? 'true' : 'false' }} }">
+                                                @if(!empty($item['notes']))
+                                                    <div class="mb-2 text-xs text-orange-600 bg-orange-50 border border-orange-100 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                                                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                        {{ $item['notes'] }}
                                                     </div>
+                                                @endif
+                                                <button @click="open = !open" class="text-xs text-indigo-500 hover:text-indigo-700 font-medium flex items-center gap-1 transition-colors">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    <span x-text="open ? 'Tutup catatan' : '+ Tambah catatan'"></span>
+                                                </button>
+                                                <div x-show="open" x-transition class="mt-2">
+                                                    <input type="text"
+                                                        wire:model.blur="cart.{{ $menuId }}.notes"
+                                                        wire:change="updateNotes({{ $menuId }}, $event.target.value)"
+                                                        placeholder="cth: tidak pedas, tanpa bawang..."
+                                                        value="{{ $item['notes'] }}"
+                                                        class="w-full text-xs rounded-lg border-gray-200 focus:border-indigo-400 focus:ring-indigo-400 py-2 px-3 placeholder-gray-400">
                                                 </div>
                                             </div>
                                         </li>
@@ -170,12 +216,82 @@
 
                     @if(count($cart) > 0)
                         <div class="border-t border-gray-200 py-6 px-4 sm:px-6 bg-gray-50">
+                            
+                            <!-- Nama Pemesan -->
+                            <div class="mb-6">
+                                <label class="text-sm font-medium text-gray-700 block mb-2">Nama Pemesan <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="customer_name"
+                                    placeholder="Masukkan nama Anda..."
+                                    class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 text-sm">
+                                @error('customer_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Order Type Selection -->
+                            <div class="mb-6">
+                                <label class="text-sm font-medium text-gray-700 block mb-3">Tipe Pesanan</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="relative flex cursor-pointer rounded-xl border {{ $orderType === 'dine-in' ? 'bg-indigo-50 border-indigo-600' : 'bg-white border-gray-200' }} p-4 shadow-sm focus:outline-none">
+                                        <input type="radio" wire:model.live="orderType" value="dine-in" class="sr-only">
+                                        <span class="flex flex-1">
+                                            <span class="flex flex-col">
+                                                <span class="block text-sm font-medium {{ $orderType === 'dine-in' ? 'text-indigo-900' : 'text-gray-900' }}">Makan di Tempat</span>
+                                                <span class="mt-1 flex items-center text-xs {{ $orderType === 'dine-in' ? 'text-indigo-500' : 'text-gray-500' }}">Dine-in</span>
+                                            </span>
+                                        </span>
+                                        @if($orderType === 'dine-in')
+                                            <svg class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        @endif
+                                    </label>
+
+                                    <label class="relative flex cursor-pointer rounded-xl border {{ $orderType === 'takeaway' ? 'bg-indigo-50 border-indigo-600' : 'bg-white border-gray-200' }} p-4 shadow-sm focus:outline-none">
+                                        <input type="radio" wire:model.live="orderType" value="takeaway" class="sr-only">
+                                        <span class="flex flex-1">
+                                            <span class="flex flex-col">
+                                                <span class="block text-sm font-medium {{ $orderType === 'takeaway' ? 'text-indigo-900' : 'text-gray-900' }}">Bawa Pulang</span>
+                                                <span class="mt-1 flex items-center text-xs {{ $orderType === 'takeaway' ? 'text-indigo-500' : 'text-gray-500' }}">Takeaway</span>
+                                            </span>
+                                        </span>
+                                        @if($orderType === 'takeaway')
+                                            <svg class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        @endif
+                                    </label>
+                                </div>
+                            </div>
+
+                            @if($orderType === 'dine-in')
+                                <div class="mb-6">
+                                    <label class="text-sm font-medium text-gray-700 block mb-2">Pilih Nomor Meja <span class="text-red-500">*</span></label>
+                                    <select wire:model="table_id" class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 text-sm">
+                                        <option value="">-- Pilih Meja Anda --</option>
+                                        @foreach($tables as $table)
+                                            <option value="{{ $table->id }}">Meja {{ $table->table_number }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('table_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                </div>
+                            @endif
+
                             <div class="flex justify-between text-lg font-bold text-gray-900 mb-4">
                                 <p>Total</p>
                                 <p>Rp {{ number_format($this->cartTotal, 0, ',', '.') }}</p>
                             </div>
-                            <button wire:click="checkout" class="w-full flex justify-center items-center px-6 py-4 border border-transparent rounded-2xl shadow-sm text-base font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                Checkout Pesanan
+                            <button wire:click="checkout"
+                                wire:loading.attr="disabled"
+                                wire:loading.class="opacity-60 cursor-not-allowed"
+                                wire:target="checkout"
+                                class="w-full flex justify-center items-center gap-2 px-6 py-4 border border-transparent rounded-2xl shadow-sm text-base font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                                <span wire:loading.remove wire:target="checkout">Checkout Pesanan</span>
+                                <span wire:loading wire:target="checkout" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Memproses...
+                                </span>
                             </button>
                         </div>
                     @endif

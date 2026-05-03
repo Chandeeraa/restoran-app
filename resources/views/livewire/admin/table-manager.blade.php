@@ -68,9 +68,14 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($table->qr_code)
-                                        <div class="h-16 w-16 bg-white p-1 border rounded shadow-sm">
-                                            {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(50)->generate($table->qr_code) !!}
-                                        </div>
+                                        <button wire:click="openQrModal({{ $table->id }})" class="group relative">
+                                            <div class="h-16 w-16 bg-white p-1 border rounded shadow-sm group-hover:border-indigo-300 transition-all">
+                                                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(50)->generate($table->qr_code) !!}
+                                            </div>
+                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 rounded transition-opacity">
+                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                            </div>
+                                        </button>
                                     @else
                                         <span class="text-gray-400 text-xs">No QR</span>
                                     @endif
@@ -102,4 +107,36 @@
             </div>
         </div>
     </div>
+
+    <!-- QR Modal -->
+    @if($showQrModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeQrModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">QR Code Meja {{ $selectedTableNumber }}</h3>
+                        <p class="text-sm text-gray-500 mb-6">Scan QR ini untuk langsung memesan di meja ini.</p>
+                        
+                        <div class="flex justify-center mb-6">
+                            <div class="p-4 bg-white border-4 border-indigo-50 rounded-3xl shadow-inner">
+                                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->margin(1)->generate($selectedTableQr) !!}
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="window.print()" class="flex-1 inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2.5 px-4 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all">
+                                Print QR
+                            </button>
+                            <button wire:click="closeQrModal" class="flex-1 inline-flex justify-center rounded-xl border border-gray-300 bg-white py-2.5 px-4 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-all">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
+
