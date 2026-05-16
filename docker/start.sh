@@ -1,41 +1,46 @@
 #!/bin/sh
-set -e
+# NO set -e - script harus tetap jalan meski ada error
 
 cd /var/www/html
 
-echo ">>> [1/7] Setting up directories..."
+echo ">>> [1/8] Setup directories..."
 mkdir -p storage/app/public \
          storage/framework/cache/data \
          storage/framework/sessions \
          storage/framework/views \
          storage/logs \
          bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R 775 storage bootstrap/cache
+chmod -R 777 storage bootstrap/cache
 
-echo ">>> [2/7] Checking APP_KEY..."
-if [ -z "$APP_KEY" ]; then
-    echo "ERROR: APP_KEY is not set! Please set it in Railway Variables."
-    exit 1
-fi
-
-echo ">>> [3/7] Caching Laravel config..."
-php artisan config:cache 2>&1 && echo "config:cache OK" || echo "config:cache SKIPPED"
-php artisan route:cache 2>&1 && echo "route:cache OK" || echo "route:cache SKIPPED"
-php artisan view:cache  2>&1 && echo "view:cache OK"  || echo "view:cache SKIPPED"
-
-echo ">>> [4/7] Running migrations..."
-php artisan migrate --force 2>&1 && echo "migrate OK" || echo "migrate SKIPPED (check DB vars)"
-
-echo ">>> [5/7] Storage link..."
-php artisan storage:link 2>/dev/null || true
-
-echo ">>> [6/7] Starting PHP-FPM..."
+echo ">>> [2/8] Starting PHP-FPM..."
 php-fpm -D
 sleep 2
 
-echo ">>> [7/7] Starting Queue Worker in background..."
-php artisan queue:work --daemon --sleep=3 --tries=3 --max-time=3600 &
+echo ">>> [3/8] Starting Nginx (background)..."
+nginx &
+NGINX_PID=$!
+echo "Nginx PID: $NGINX_PID"
 
-echo ">>> All services started! Starting Nginx..."
-exec nginx -g "daemon off;"
+echo ">>> [4/8] Check/generate APP_KEY..."
+if [ -z "$APP_KEY" ]; then
+    echo "WARNING: APP_KEY not set, generating..."
+    php artisan key:generate --force
+else
+    echo "APP_KEY is set."
+fi
+
+echo ">>> [5/8] Clear old cache..."
+php artisan config:clear  2>&1 || true
+php artisan cache:clear   2>&1 || true
+
+echo ">>> [6/8] Running migrations..."
+php artisan migrate --force 2>&1 || echo "WARNING: migrate failed, check DB vars"
+
+echo ">>> [7/8] Storage link..."
+php artisan storage:link 2>/dev/null || true
+
+echo ">>> [8/8] Starting queue worker..."
+php artisan queue:work --sleep=3 --tries=3 --max-time=3600 &
+
+echo ">>> All services running! Nginx PID: $NGINX_PID"
+wait $NGINX_PID
