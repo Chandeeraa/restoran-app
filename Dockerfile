@@ -15,7 +15,8 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libzip-dev \
     icu-dev \
-    supervisor
+    && mkdir -p /var/log/nginx \
+    && mkdir -p /run/nginx
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -50,28 +51,25 @@ RUN mkdir -p bootstrap/cache \
     && chmod -R 777 bootstrap/cache \
     && chmod -R 777 storage
 
-# Install PHP dependencies (production) - skip scripts to avoid artisan calls during build
+# Install PHP dependencies - skip scripts to avoid artisan calls during build
 RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist --no-scripts \
     && composer dump-autoload --optimize
 
 # Install Node dependencies and build assets
 RUN npm ci && npm run build && rm -rf node_modules
 
-# Set permissions
+# Copy nginx config
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy start script
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Set final permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copy nginx config
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-
-# Copy supervisor config
-COPY docker/supervisord.conf /etc/supervisord.conf
-
-# Copy entrypoint script
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 EXPOSE 8080
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/start.sh"]
