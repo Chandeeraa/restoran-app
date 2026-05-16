@@ -38,16 +38,20 @@
 <body>
     <div class="receipt-container">
         <div class="text-center mb-4">
-            <h2 class="font-bold" style="margin:0;">RESTORAN APP</h2>
-            <div>Jl. Merdeka No. 123, Jakarta</div>
-            <div>Tel: (021) 1234-5678</div>
+            <h2 class="font-bold" style="margin:0; font-size: 1.2em;">{{ $setting->store_name ?? 'RESTORAN APP' }}</h2>
+            @if($setting && $setting->store_address)
+                <div>{{ $setting->store_address }}</div>
+            @endif
+            @if($setting && $setting->store_phone)
+                <div>Tel: {{ $setting->store_phone }}</div>
+            @endif
         </div>
 
         <div class="border-top mb-2">
             <div>Order: {{ $order->order_number }}</div>
             <div>Date: {{ $order->created_at->format('d/m/Y H:i') }}</div>
             <div>Type: {{ ucfirst($order->order_type) }} {{ $order->table ? '- Table '.$order->table->table_number : '' }}</div>
-            <div>Cashier: Admin</div> <!-- Hardcoded for now or fetch auth user if available -->
+            <div>Cashier: {{ auth()->user() ? auth()->user()->name : 'Admin' }}</div>
         </div>
 
         <table class="border-top border-bottom mb-2">
@@ -64,9 +68,31 @@
         </table>
 
         <table class="mb-4">
-            <tr class="font-bold">
-                <td>TOTAL</td>
-                <td class="text-right">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+            <tr>
+                <td>Subtotal</td>
+                <td class="text-right">Rp {{ number_format($order->subtotal_price ?? $order->total_price, 0, ',', '.') }}</td>
+            </tr>
+            @if($order->tax_amount > 0)
+            <tr>
+                <td>Tax / PPN</td>
+                <td class="text-right">Rp {{ number_format($order->tax_amount, 0, ',', '.') }}</td>
+            </tr>
+            @endif
+            @if($order->service_charge_amount > 0)
+            <tr>
+                <td>Service Charge</td>
+                <td class="text-right">Rp {{ number_format($order->service_charge_amount, 0, ',', '.') }}</td>
+            </tr>
+            @endif
+            @if($order->discount_amount > 0)
+            <tr>
+                <td>Diskon ({{ $order->discount_code }})</td>
+                <td class="text-right">- Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</td>
+            </tr>
+            @endif
+            <tr class="font-bold" style="border-top: 1px dashed #000;">
+                <td style="padding-top: 4px;">TOTAL</td>
+                <td class="text-right" style="padding-top: 4px;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
             </tr>
             @if($order->payment)
             <tr>

@@ -17,7 +17,7 @@
             body { font-family: 'Outfit', sans-serif; }
         </style>
     </head>
-    <body class="font-sans text-gray-900 antialiased bg-gray-50">
+    <body class="font-sans text-gray-900 dark:text-slate-100 antialiased bg-gray-50 dark:bg-slate-800/50">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900">
             
             <!-- Abstract Background Shapes for Restaurant Vibe -->
@@ -35,7 +35,7 @@
                 </a>
             </div>
 
-            <div class="z-10 w-full sm:max-w-md px-8 py-10 bg-white/95 backdrop-blur-xl shadow-2xl overflow-hidden sm:rounded-[2rem] border border-white/20">
+            <div class="z-10 w-full sm:max-w-md px-8 py-10 bg-white dark:bg-slate-800/95 backdrop-blur-xl shadow-2xl overflow-hidden sm:rounded-[2rem] border border-white/20">
                 {{ $slot }}
             </div>
             

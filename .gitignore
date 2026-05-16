@@ -24,3 +24,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Temporary fix/utility scripts
+fix_*.php
+/public/sounds

@@ -13,6 +13,7 @@ class CategoryManager extends Component
     public $name = '';
     public $slug = '';
     public $is_active = true;
+    public $is_drink = false;
     public $categoryId = null;
     public $isEditMode = false;
 
@@ -30,9 +31,10 @@ class CategoryManager extends Component
         ]);
 
         Category::create([
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'is_active' => $this->is_active,
+            'name'     => $this->name,
+            'slug'     => $this->slug,
+            'is_active'=> $this->is_active,
+            'is_drink' => $this->is_drink,
         ]);
 
         $this->resetFields();
@@ -43,9 +45,10 @@ class CategoryManager extends Component
     {
         $category = Category::findOrFail($id);
         $this->categoryId = $category->id;
-        $this->name = $category->name;
-        $this->slug = $category->slug;
-        $this->is_active = $category->is_active;
+        $this->name       = $category->name;
+        $this->slug       = $category->slug;
+        $this->is_active  = $category->is_active;
+        $this->is_drink   = $category->is_drink;
         $this->isEditMode = true;
     }
 
@@ -59,9 +62,10 @@ class CategoryManager extends Component
 
         $category = Category::findOrFail($this->categoryId);
         $category->update([
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'is_active' => $this->is_active,
+            'name'     => $this->name,
+            'slug'     => $this->slug,
+            'is_active'=> $this->is_active,
+            'is_drink' => $this->is_drink,
         ]);
 
         $this->resetFields();
@@ -76,9 +80,10 @@ class CategoryManager extends Component
 
     public function resetFields()
     {
-        $this->name = '';
-        $this->slug = '';
-        $this->is_active = true;
+        $this->name       = '';
+        $this->slug       = '';
+        $this->is_active  = true;
+        $this->is_drink   = false;
         $this->categoryId = null;
         $this->isEditMode = false;
     }

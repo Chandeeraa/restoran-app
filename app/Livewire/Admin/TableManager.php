@@ -71,6 +71,14 @@ class TableManager extends Component
         session()->flash('message', 'Table deleted successfully.');
     }
 
+    public function toggleStatus($id)
+    {
+        $table = Table::findOrFail($id);
+        $newStatus = $table->status === 'available' ? 'occupied' : 'available';
+        $table->update(['status' => $newStatus]);
+        session()->flash('message', 'Status Meja ' . $table->table_number . ' diubah ke ' . ucfirst($newStatus) . '.');
+    }
+
     public function resetFields()
     {
         $this->table_number = '';

@@ -8,27 +8,33 @@ use Livewire\Component;
 class TrackOrder extends Component
 {
     public $order_number;
+    public $previousStatus = null;
 
     public function mount($order_number)
     {
         $this->order_number = $order_number;
-        
-        // Verify order exists, otherwise 404
-        Order::where('order_number', $this->order_number)->firstOrFail();
+        $order = Order::where('order_number', $this->order_number)->firstOrFail();
+        $this->previousStatus = $order->status;
     }
 
-    public function getOrderProperty()
+    /**
+     * Apakah order berisi minimal 1 item makanan (bukan minuman)?
+     */
+    private function orderHasFood(Order $order): bool
     {
-        return Order::with('items.menu', 'table')
-            ->where('order_number', $this->order_number)
-            ->first();
+        foreach ($order->items as $item) {
+            $cat = $item->menu?->category;
+            if ($cat && !$cat->is_drink) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function cancelOrder()
     {
-        $order = $this->order;
+        $order = Order::with('items')->where('order_number', $this->order_number)->first();
 
-        // Only allow cancellation if still pending
         if (!$order || $order->status !== 'pending') {
             return;
         }
@@ -36,7 +42,6 @@ class TrackOrder extends Component
         $order->status = 'cancelled';
         $order->save();
 
-        // Free up the table if dine-in
         if ($order->order_type === 'dine-in' && $order->table_id) {
             \App\Models\Table::where('id', $order->table_id)->update(['status' => 'available']);
         }
@@ -44,8 +49,17 @@ class TrackOrder extends Component
 
     public function render()
     {
+        $order = Order::with(['items.menu.category', 'table'])
+            ->where('order_number', $this->order_number)
+            ->first();
+
+        $hasFood         = $order ? $this->orderHasFood($order) : false;
+        $shouldPlayAudio = $order && $order->status === 'ready' && $hasFood;
+
         return view('livewire.customer.track-order', [
-            'order' => $this->order
+            'order'           => $order,
+            'hasFood'         => $hasFood,
+            'shouldPlayAudio' => $shouldPlayAudio,
         ])->layout('layouts.customer');
     }
 }
