@@ -20,12 +20,12 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 echo "==> Caching config, routes, and views..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || echo "WARNING: config:cache failed, continuing..."
+php artisan route:cache || echo "WARNING: route:cache failed, continuing..."
+php artisan view:cache || echo "WARNING: view:cache failed, continuing..."
 
-echo "==> Running migrations..."
-php artisan migrate --force
+echo "==> Running migrations (if DB is available)..."
+php artisan migrate --force 2>&1 || echo "WARNING: migrate failed (DB might not be ready), continuing..."
 
 echo "==> Running database seeders..."
 php artisan db:seed --force 2>/dev/null || true
