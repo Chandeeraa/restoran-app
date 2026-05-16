@@ -2,42 +2,30 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        \App\Models\User::create([
-            'name' => 'Admin',
-            'email' => 'admin@app.com',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
-        ]);
-        
-        \App\Models\User::create([
-            'name' => 'Kitchen',
-            'email' => 'kitchen@app.com',
-            'password' => bcrypt('password'),
-            'role' => 'kitchen',
-        ]);
+        \App\Models\User::firstOrCreate(
+            ['email' => 'admin@app.com'],
+            ['name' => 'Admin', 'password' => bcrypt('password'), 'role' => 'admin']
+        );
 
-        \App\Models\User::create([
-            'name' => 'Cashier User',
-            'email' => 'cashier@app.com',
-            'password' => bcrypt('password'),
-            'role' => 'cashier',
-        ]);
+        \App\Models\User::firstOrCreate(
+            ['email' => 'kitchen@app.com'],
+            ['name' => 'Kitchen', 'password' => bcrypt('password'), 'role' => 'kitchen']
+        );
 
-        \App\Models\User::create([
-            'name' => 'Customer User',
-            'email' => 'customer@app.com',
-            'password' => bcrypt('password'),
-            'role' => 'customer',
-        ]);
+        \App\Models\User::firstOrCreate(
+            ['email' => 'cashier@app.com'],
+            ['name' => 'Cashier User', 'password' => bcrypt('password'), 'role' => 'cashier']
+        );
+
+        \App\Models\User::firstOrCreate(
+            ['email' => 'customer@app.com'],
+            ['name' => 'Customer User', 'password' => bcrypt('password'), 'role' => 'customer']
+        );
     }
 }
