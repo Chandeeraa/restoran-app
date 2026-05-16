@@ -24,12 +24,15 @@ else
     echo "APP_KEY is set OK."
 fi
 
-echo ">>> [4/7] Clear old cache..."
+echo ">>> [4/7] Clear all caches..."
 php artisan config:clear 2>&1 || true
 php artisan cache:clear  2>&1 || true
+php artisan route:clear  2>&1 || true
+php artisan view:clear   2>&1 || true
 
-echo ">>> [5/7] Running migrations..."
+echo ">>> [5/7] Running migrations and seeding..."
 php artisan migrate --force 2>&1 && echo "Migrations OK" || echo "WARNING: Migrations failed"
+php artisan db:seed --force 2>&1 && echo "Seeding OK" || echo "WARNING: Seeding skipped"
 
 echo ">>> [6/7] Storage link..."
 php artisan storage:link 2>/dev/null || true
