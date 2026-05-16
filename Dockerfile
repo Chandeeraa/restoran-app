@@ -40,8 +40,19 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install PHP dependencies (production)
-RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# Create required directories BEFORE composer install
+RUN mkdir -p bootstrap/cache \
+    && mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && mkdir -p storage/app/public \
+    && chmod -R 777 bootstrap/cache \
+    && chmod -R 777 storage
+
+# Install PHP dependencies (production) - skip scripts to avoid artisan calls during build
+RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist --no-scripts \
+    && composer dump-autoload --optimize
 
 # Install Node dependencies and build assets
 RUN npm ci && npm run build && rm -rf node_modules
