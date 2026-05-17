@@ -25,6 +25,12 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
+    <!-- Back Button -->
+    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-green transition-colors mb-8" wire:navigate>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Kembali ke Beranda
+    </a>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
