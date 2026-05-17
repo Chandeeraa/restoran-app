@@ -89,46 +89,7 @@ new class extends Component
     </header>
 
     <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
-        <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
-            <!-- Profile Photo File Input -->
-            <input type="file" id="photo" class="hidden"
-                        wire:model.live="photo"
-                        x-ref="photo"
-                        x-on:change="
-                                photoName = $refs.photo.files[0].name;
-                                const reader = new FileReader();
-                                reader.onload = (e) => {
-                                    photoPreview = e.target.result;
-                                };
-                                reader.readAsDataURL($refs.photo.files[0]);
-                        " />
 
-            <x-input-label for="photo" value="{{ __('Photo') }}" />
-
-            <!-- Current Profile Photo -->
-            <div class="mt-2" x-show="! photoPreview">
-                @if(auth()->user()->profile_photo_path)
-                    <img src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" class="rounded-full h-20 w-20 object-cover border border-gray-200 dark:border-slate-700">
-                @else
-                    <div class="h-20 w-20 rounded-full bg-gradient-to-tr from-emerald-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-                        {{ substr(auth()->user()->name, 0, 1) }}
-                    </div>
-                @endif
-            </div>
-
-            <!-- New Profile Photo Preview -->
-            <div class="mt-2" x-show="photoPreview" style="display: none;">
-                <span class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center border border-gray-200 dark:border-slate-700"
-                      x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
-                </span>
-            </div>
-
-            <x-secondary-button class="mt-2 me-2" type="button" x-on:click.prevent="$refs.photo.click()">
-                {{ __('Select A New Photo') }}
-            </x-secondary-button>
-
-            <x-input-error :messages="$errors->get('photo')" class="mt-2" />
-        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
