@@ -37,12 +37,116 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 overflow-hidden">
+        {{-- ===================== MOBILE CARD LAYOUT ===================== --}}
+        <div class="block lg:hidden space-y-3">
+            @forelse ($orders as $order)
+                @php
+                    $statusColor = match($order->status) {
+                        'pending'   => 'bg-orange-100 text-orange-800',
+                        'cooking'   => 'bg-yellow-100 text-yellow-800',
+                        'ready'     => 'bg-green-100 text-green-800',
+                        'served'    => 'bg-emerald-100 text-emerald-800',
+                        'completed' => 'bg-gray-100 text-gray-600',
+                        'cancelled' => 'bg-red-100 text-red-700',
+                        default     => 'bg-gray-100 text-gray-600',
+                    };
+                    $statusLabel = $order->status === 'cooking' ? 'Memasak' : ucfirst($order->status);
+                @endphp
+                <div wire:key="card-{{ $order->id }}"
+                     class="bg-white dark:bg-slate-800 rounded-2xl border {{ $order->payment_status === 'unpaid' ? 'border-red-200 dark:border-red-800' : 'border-gray-100 dark:border-slate-700' }} shadow-sm p-4">
+
+                    {{-- Top Row: Queue + Order Info + Payment Status --}}
+                    <div class="flex items-start gap-3 mb-3">
+                        {{-- Queue Badge --}}
+                        @if($order->queue_number)
+                        <div class="flex flex-col items-center shrink-0 w-14 py-2 rounded-xl {{ $order->queue_type === 1 ? 'bg-blue-50 border border-blue-200' : 'bg-purple-50 border border-purple-200' }}">
+                            <span class="text-[10px] font-bold uppercase {{ $order->queue_type === 1 ? 'text-blue-500' : 'text-purple-500' }}">{{ $order->queue_type === 1 ? 'Cash' : 'QRIS' }}</span>
+                            <span class="text-2xl font-black leading-none {{ $order->queue_type === 1 ? 'text-blue-700' : 'text-purple-700' }}">{{ str_pad($order->queue_number, 3, '0', STR_PAD_LEFT) }}</span>
+                        </div>
+                        @endif
+
+                        {{-- Order Info --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{{ $order->order_number }}</span>
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $statusColor }}">{{ $statusLabel }}</span>
+                            </div>
+                            @if($order->customer_name)
+                                <div class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">{{ $order->customer_name }}</div>
+                            @endif
+                            <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                <span class="text-xs text-gray-500 dark:text-slate-400">{{ $order->created_at->format('H:i') }}</span>
+                                <span class="text-xs text-gray-500 dark:text-slate-400">·</span>
+                                <span class="text-xs font-medium text-gray-600 dark:text-slate-400">{{ $order->order_type === 'dine-in' ? 'Dine-in' : 'Takeaway' }}</span>
+                                @if($order->table)
+                                    <span class="text-xs font-bold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full">Meja {{ $order->table->table_number }}</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Payment Status --}}
+                        <div class="shrink-0 text-right">
+                            <div class="text-base font-extrabold text-gray-900 dark:text-slate-100">Rp {{ number_format($order->total_price, 0, ',', '.') }}</div>
+                            @if($order->payment_status === 'paid')
+                                <span class="text-xs font-bold text-emerald-600">✓ Lunas</span>
+                            @else
+                                <span class="text-xs font-bold text-red-500">✗ Belum</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100 dark:border-slate-700">
+                        @if($order->status === 'cancelled')
+                            <span class="text-gray-400 italic text-xs py-2 px-3 bg-gray-50 dark:bg-slate-700 rounded-xl border border-gray-100 dark:border-slate-700">Dibatalkan</span>
+                        @else
+                            @if($order->status !== 'completed')
+                                <button wire:click="cancelOrder({{ $order->id }})"
+                                    wire:confirm="Batalkan pesanan {{ $order->order_number }}?"
+                                    class="flex-1 min-w-[80px] py-2 text-xs font-bold rounded-xl border border-red-200 text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 transition-colors">
+                                    ✕ Batalkan
+                                </button>
+                                <button wire:click="completeOrder({{ $order->id }})"
+                                    class="flex-1 min-w-[80px] py-2 text-xs font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                    ✓ Selesai
+                                </button>
+                            @endif
+
+                            @if($order->payment_status === 'unpaid')
+                                <button wire:click="openPaymentModal({{ $order->id }})"
+                                    class="flex-1 min-w-[80px] py-2 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">
+                                    💳 Bayar
+                                </button>
+                            @elseif($order->payment_status === 'paid')
+                                <a href="{{ route('cashier.receipt', $order->id) }}" target="_blank"
+                                    class="flex-1 min-w-[80px] py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 text-center transition-colors">
+                                    🖨️ Receipt
+                                </a>
+                            @endif
+                        @endif
+
+                        @if(auth()->user()->role === 'admin')
+                            <button wire:click="deleteOrder({{ $order->id }})"
+                                wire:confirm="HAPUS PERMANEN pesanan {{ $order->order_number }}?"
+                                class="py-2 px-3 text-xs font-bold rounded-xl border border-red-200 dark:border-red-800 text-red-500 bg-white dark:bg-slate-800 hover:bg-red-50 transition-colors" title="Hapus">
+                                🗑
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-12 text-gray-400 dark:text-slate-500 text-sm">Tidak ada pesanan ditemukan.</div>
+            @endforelse
+        </div>
+
+        {{-- ===================== DESKTOP TABLE LAYOUT ===================== --}}
+        <div class="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-800/50">
                         <tr>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Order ID</th>
+                            <th scope="col" class="px-4 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Antrian</th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Type / Table</th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Total</th>
@@ -59,6 +163,21 @@
                                         <div class="text-xs font-semibold text-emerald-700 mt-0.5">{{ $order->customer_name }}</div>
                                     @endif
                                     <div class="text-xs text-gray-400">{{ $order->created_at->format('H:i') }}</div>
+                                </td>
+                                {{-- Queue Number Column --}}
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    @if($order->queue_number)
+                                        <div class="flex flex-col items-center gap-1">
+                                            <span class="text-2xl font-black leading-none {{ $order->queue_type === 1 ? 'text-blue-600' : 'text-purple-600' }}">
+                                                {{ str_pad($order->queue_number, 3, '0', STR_PAD_LEFT) }}
+                                            </span>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full {{ $order->queue_type === 1 ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700' }}">
+                                                {{ $order->queue_type === 1 ? 'Cash' : 'QRIS' }}
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-gray-300 dark:text-slate-600">—</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-slate-100">{{ $order->order_type === 'dine-in' ? 'Dine-in' : 'Takeaway' }}</div>

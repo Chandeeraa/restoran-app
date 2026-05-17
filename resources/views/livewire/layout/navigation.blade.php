@@ -61,11 +61,8 @@ new class extends Component
         </div>
         <!-- Desktop Logo & Profile -->
         <div class="hidden md:flex flex-col items-center pt-8 pb-6 px-4 border-b border-gray-100 dark:border-slate-700/50">
-            <a href="{{ route('dashboard') }}" wire:navigate class="mb-6 flex items-center gap-2">
-                <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
-                    <span class="text-white font-bold text-xl">R</span>
-                </div>
-                <span class="font-bold text-xl tracking-tight text-black dark:text-white drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+            <a href="{{ route('dashboard') }}" wire:navigate class="mb-6 w-full flex justify-center">
+                <x-application-logo class="h-20" />
             </a>
             
             @if(auth()->user()->profile_photo_path)
@@ -186,10 +183,10 @@ new class extends Component
                     Cashier POS
                 </x-nav-link>
                 @if(auth()->user()->role === 'cashier')
-                    <!-- Cashier can also make orders usually -->
-                    <x-nav-link :href="route('order')" :active="request()->routeIs('order')" class="flex w-full px-3 py-2 rounded-lg mb-1 {{ request()->routeIs('order') ? 'bg-brand-yellow/20 dark:bg-brand-yellow/20 text-yellow-700 dark:text-brand-yellow' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50' }}" wire:navigate.hover>
-                        <svg class="w-5 h-5 mr-3 {{ request()->routeIs('order') ? 'text-brand-orange' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        Order Page
+                    <!-- Dedicated Cashier POS Terminal -->
+                    <x-nav-link :href="route('cashier.terminal')" :active="request()->routeIs('cashier.terminal')" class="flex w-full px-3 py-2 rounded-lg mb-1 {{ request()->routeIs('cashier.terminal') ? 'bg-brand-yellow/20 dark:bg-brand-yellow/20 text-yellow-700 dark:text-brand-yellow' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50' }}" wire:navigate.hover>
+                        <svg class="w-5 h-5 mr-3 {{ request()->routeIs('cashier.terminal') ? 'text-brand-orange' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        POS Terminal
                     </x-nav-link>
                 @endif
             @endif

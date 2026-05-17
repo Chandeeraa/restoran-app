@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -11,15 +12,20 @@ class CategoryManager extends Component
     use WithPagination;
 
     public $name = '';
+
     public $slug = '';
+
     public $is_active = true;
+
     public $is_drink = false;
+
     public $categoryId = null;
+
     public $isEditMode = false;
 
     public function updatedName($value)
     {
-        $this->slug = \Illuminate\Support\Str::slug($value);
+        $this->slug = Str::slug($value);
     }
 
     public function store()
@@ -31,9 +37,9 @@ class CategoryManager extends Component
         ]);
 
         Category::create([
-            'name'     => $this->name,
-            'slug'     => $this->slug,
-            'is_active'=> $this->is_active,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'is_active' => $this->is_active,
             'is_drink' => $this->is_drink,
         ]);
 
@@ -45,10 +51,10 @@ class CategoryManager extends Component
     {
         $category = Category::findOrFail($id);
         $this->categoryId = $category->id;
-        $this->name       = $category->name;
-        $this->slug       = $category->slug;
-        $this->is_active  = $category->is_active;
-        $this->is_drink   = $category->is_drink;
+        $this->name = $category->name;
+        $this->slug = $category->slug;
+        $this->is_active = $category->is_active;
+        $this->is_drink = $category->is_drink;
         $this->isEditMode = true;
     }
 
@@ -56,15 +62,15 @@ class CategoryManager extends Component
     {
         $this->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $this->categoryId,
+            'slug' => 'required|string|max:255|unique:categories,slug,'.$this->categoryId,
             'is_active' => 'boolean',
         ]);
 
         $category = Category::findOrFail($this->categoryId);
         $category->update([
-            'name'     => $this->name,
-            'slug'     => $this->slug,
-            'is_active'=> $this->is_active,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'is_active' => $this->is_active,
             'is_drink' => $this->is_drink,
         ]);
 
@@ -80,10 +86,10 @@ class CategoryManager extends Component
 
     public function resetFields()
     {
-        $this->name       = '';
-        $this->slug       = '';
-        $this->is_active  = true;
-        $this->is_drink   = false;
+        $this->name = '';
+        $this->slug = '';
+        $this->is_active = true;
+        $this->is_drink = false;
         $this->categoryId = null;
         $this->isEditMode = false;
     }
@@ -91,7 +97,7 @@ class CategoryManager extends Component
     public function render()
     {
         return view('livewire.admin.category-manager', [
-            'categories' => Category::paginate(10)
+            'categories' => Category::paginate(10),
         ])->layout('layouts.app');
     }
 }

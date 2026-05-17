@@ -24,6 +24,7 @@ class Discount extends Model
         if ($this->type === 'percentage') {
             return $subtotal * ($this->value / 100);
         }
+
         // Fixed amount, but cannot exceed subtotal
         return min($this->value, $subtotal);
     }
@@ -33,8 +34,13 @@ class Discount extends Model
      */
     public function isUsable(): bool
     {
-        if (!$this->is_active) return false;
-        if ($this->max_uses !== null && $this->used_count >= $this->max_uses) return false;
+        if (! $this->is_active) {
+            return false;
+        }
+        if ($this->max_uses !== null && $this->used_count >= $this->max_uses) {
+            return false;
+        }
+
         return true;
     }
 }

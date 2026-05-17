@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 leading-tight">
-            {{ __('Admin Dashboard') }}
+            {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
@@ -75,7 +75,8 @@
 
             <!-- Quick Actions -->
             <h3 class="text-xl font-bold text-gray-800 dark:text-slate-200 mt-8 mb-4 px-2">Quick Access</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6                <a href="{{ route('cashier.terminal') }}" class="group block bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6 hover:shadow-md hover:border-brand-yellow transition-all">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="{{ route('cashier.terminal') }}" class="group block bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6 hover:shadow-md hover:border-brand-yellow transition-all">
                     <div class="flex items-center justify-between mb-4">
                         <div class="w-12 h-12 bg-brand-yellow/20 rounded-xl flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-colors">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>

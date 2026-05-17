@@ -10,7 +10,7 @@ class Category extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'is_drink'  => 'boolean',
+        'is_drink' => 'boolean',
     ];
 
     public function menus()

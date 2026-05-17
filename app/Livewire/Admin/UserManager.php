@@ -13,10 +13,15 @@ class UserManager extends Component
     use WithPagination;
 
     public $name = '';
+
     public $email = '';
+
     public $password = '';
+
     public $role = 'waiter';
+
     public $userId = null;
+
     public $isEditMode = false;
 
     public function mount()
@@ -48,6 +53,7 @@ class UserManager extends Component
     {
         if ($id == auth()->id()) {
             session()->flash('error', 'Gunakan menu Profile untuk mengedit akun Anda sendiri.');
+
             return;
         }
 
@@ -56,14 +62,15 @@ class UserManager extends Component
         // Blokir edit akun Admin
         if ($user->role === 'admin') {
             session()->flash('error', 'Akun Admin tidak dapat diedit melalui halaman ini.');
+
             return;
         }
 
-        $this->userId    = $user->id;
-        $this->name      = $user->name;
-        $this->email     = $user->email;
-        $this->role      = $user->role;
-        $this->password  = '';
+        $this->userId = $user->id;
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->role = $user->role;
+        $this->password = '';
         $this->isEditMode = true;
     }
 
@@ -77,14 +84,14 @@ class UserManager extends Component
         ]);
 
         $user = User::findOrFail($this->userId);
-        
+
         $data = [
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
         ];
 
-        if (!empty($this->password)) {
+        if (! empty($this->password)) {
             $data['password'] = Hash::make($this->password);
         }
 
@@ -101,12 +108,14 @@ class UserManager extends Component
         // Blokir hapus diri sendiri
         if ($user->id === auth()->id()) {
             session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+
             return;
         }
 
         // Blokir hapus akun Admin
         if ($user->role === 'admin') {
             session()->flash('error', 'Akun Admin tidak dapat dihapus melalui halaman ini.');
+
             return;
         }
 
@@ -129,8 +138,8 @@ class UserManager extends Component
     {
         return view('livewire.admin.user-manager', [
             'users' => User::orderByRaw("CASE WHEN role = 'admin' THEN 1 ELSE 2 END")
-                           ->latest()
-                           ->paginate(10)
+                ->latest()
+                ->paginate(10),
         ])->layout('layouts.app', ['header' => 'Staff & Users Management']);
     }
 }

@@ -11,11 +11,17 @@ class TableManager extends Component
     use WithPagination;
 
     public $table_number = '';
+
     public $status = 'available';
+
     public $tableId = null;
+
     public $isEditMode = false;
+
     public $showQrModal = false;
+
     public $selectedTableQr = null;
+
     public $selectedTableNumber = '';
 
     public function store()
@@ -32,7 +38,7 @@ class TableManager extends Component
 
         $url = route('order', ['table' => $table->id]);
         $table->update([
-            'qr_code' => $url
+            'qr_code' => $url,
         ]);
 
         $this->resetFields();
@@ -51,7 +57,7 @@ class TableManager extends Component
     public function update()
     {
         $this->validate([
-            'table_number' => 'required|string|max:255|unique:tables,table_number,' . $this->tableId,
+            'table_number' => 'required|string|max:255|unique:tables,table_number,'.$this->tableId,
             'status' => 'required|in:available,occupied',
         ]);
 
@@ -76,7 +82,7 @@ class TableManager extends Component
         $table = Table::findOrFail($id);
         $newStatus = $table->status === 'available' ? 'occupied' : 'available';
         $table->update(['status' => $newStatus]);
-        session()->flash('message', 'Status Meja ' . $table->table_number . ' diubah ke ' . ucfirst($newStatus) . '.');
+        session()->flash('message', 'Status Meja '.$table->table_number.' diubah ke '.ucfirst($newStatus).'.');
     }
 
     public function resetFields()
@@ -105,7 +111,7 @@ class TableManager extends Component
     public function render()
     {
         return view('livewire.admin.table-manager', [
-            'tables' => Table::paginate(10)
+            'tables' => Table::paginate(10),
         ])->layout('layouts.app');
     }
 }

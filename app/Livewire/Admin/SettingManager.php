@@ -8,15 +8,19 @@ use Livewire\Component;
 class SettingManager extends Component
 {
     public $store_name = '';
+
     public $store_address = '';
+
     public $store_phone = '';
+
     public $tax_rate = 0;
+
     public $service_charge_rate = 0;
 
     public function mount()
     {
         abort_if(auth()->user()->role !== 'admin', 403);
-        
+
         $setting = StoreSetting::firstOrCreate(
             ['id' => 1],
             [
@@ -24,7 +28,7 @@ class SettingManager extends Component
                 'store_address' => '',
                 'store_phone' => '',
                 'tax_rate' => 0,
-                'service_charge_rate' => 0
+                'service_charge_rate' => 0,
             ]
         );
 

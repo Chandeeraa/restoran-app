@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Kitchen;
 
-use App\Models\Order;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Events\OrderStatusUpdated;
+use App\Models\Order;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class KdsDashboard extends Component
 {
@@ -33,7 +33,7 @@ class KdsDashboard extends Component
         // Trigger browser sound notification
         $this->dispatch('new-order-sound');
     }
-    
+
     #[On('echo:kitchen-kds,OrderStatusUpdated')]
     public function handleOrderStatusUpdated($event)
     {
@@ -47,10 +47,10 @@ class KdsDashboard extends Component
         if ($order) {
             $order->status = $status;
             $order->save();
-            
+
             // Broadcast the update so other KDS screens and the customer are updated
             event(new OrderStatusUpdated($order));
-            
+
             $this->loadOrders();
         }
     }

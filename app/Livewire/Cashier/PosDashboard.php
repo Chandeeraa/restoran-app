@@ -2,25 +2,32 @@
 
 namespace App\Livewire\Cashier;
 
+use App\Events\OrderStatusUpdated;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Table;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class PosDashboard extends Component
 {
     public $orders = [];
+
     public $selectedOrder = null;
-    
+
     // Payment Modal State
     public $showPaymentModal = false;
+
     public $paymentMethod = 'cash';
+
     public $amountGiven = '';
+
     public $change = 0;
+
     public $paymentError = '';
 
     public $paymentFilter = 'all';
+
     public $search = '';
 
     public function mount()
@@ -43,17 +50,17 @@ class PosDashboard extends Component
     {
         // Load all active orders (not completed) or today's completed orders
         $query = Order::with('items.menu', 'table')
-            ->where(function($q) {
+            ->where(function ($q) {
                 if (empty($this->search)) {
                     $q->whereDate('created_at', today())
-                      ->orWhere('status', '!=', 'completed');
+                        ->orWhere('status', '!=', 'completed');
                 }
             });
 
-        if (!empty($this->search)) {
-            $query->where(function($q) {
-                $q->where('order_number', 'like', '%' . $this->search . '%')
-                  ->orWhere('customer_name', 'like', '%' . $this->search . '%');
+        if (! empty($this->search)) {
+            $query->where(function ($q) {
+                $q->where('order_number', 'like', '%'.$this->search.'%')
+                    ->orWhere('customer_name', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -71,7 +78,7 @@ class PosDashboard extends Component
     {
         $this->loadOrders();
     }
-    
+
     #[On('echo:kitchen-kds,OrderStatusUpdated')]
     public function handleOrderStatusUpdated($event)
     {
@@ -113,20 +120,24 @@ class PosDashboard extends Component
 
     public function processPayment()
     {
-        if (!$this->selectedOrder) return;
+        if (! $this->selectedOrder) {
+            return;
+        }
 
         // Re-fetch to ensure fresh status
         $order = Order::find($this->selectedOrder->id);
         if ($order->status === 'cancelled') {
             $this->paymentError = 'Pesanan ini sudah dibatalkan dan tidak bisa diproses pembayarannya.';
+
             return;
         }
-        
+
         $amount = floatval($this->amountGiven);
         $total = floatval($this->selectedOrder->total_price);
 
         if ($this->paymentMethod === 'cash' && $amount < $total) {
             $this->paymentError = 'Uang tidak cukup.';
+
             return;
         }
 
@@ -139,38 +150,47 @@ class PosDashboard extends Component
         Payment::create([
             'order_id' => $this->selectedOrder->id,
             'payment_method' => $this->paymentMethod,
-            'amount' => $total, // Always save the order total, not the amount tendered
+            'amount' => $total,
             'status' => 'success',
         ]);
 
-        // Update Order
-        $this->selectedOrder->payment_status = 'paid';
-        
+        // Assign queue number if not already assigned
+        if (! $order->queue_number) {
+            $queueType = $this->paymentMethod === 'cash' ? 1 : 2;
+            $queueNumber = $this->getNextQueueNumber($queueType);
+            $order->queue_type = $queueType;
+            $order->queue_number = $queueNumber;
+        }
+        $order->payment_method = $this->paymentMethod;
+
+        // Update payment status
+        $order->payment_status = 'paid';
+
         // Auto-complete if the order is already cooked/ready and payment is processed.
-        if (in_array($this->selectedOrder->status, ['ready', 'served'])) {
-            $this->selectedOrder->status = 'completed';
-            
+        if (in_array($order->status, ['ready', 'served'])) {
+            $order->status = 'completed';
+
             // Release table if dine-in
-            if ($this->selectedOrder->order_type === 'dine-in' && $this->selectedOrder->table_id) {
-                Table::where('id', $this->selectedOrder->table_id)->update(['status' => 'available']);
+            if ($order->order_type === 'dine-in' && $order->table_id) {
+                Table::where('id', $order->table_id)->update(['status' => 'available']);
             }
         }
-        
-        $this->selectedOrder->save();
-        
+
+        $order->save();
+
         // Broadcast that the order is updated
-        event(new \App\Events\OrderStatusUpdated($this->selectedOrder));
+        event(new OrderStatusUpdated($order));
 
         $this->closePaymentModal();
         $this->loadOrders();
-        
+
         session()->flash('success', 'Pembayaran berhasil diproses!');
     }
 
     public function cancelOrder($orderId)
     {
         $order = Order::find($orderId);
-        
+
         if ($order && $order->payment_status !== 'paid' && $order->status !== 'cancelled') {
             $order->status = 'cancelled';
             $order->save();
@@ -181,10 +201,10 @@ class PosDashboard extends Component
             }
 
             // Broadcast the update
-            event(new \App\Events\OrderStatusUpdated($order));
-            
+            event(new OrderStatusUpdated($order));
+
             $this->loadOrders();
-            session()->flash('success', 'Pesanan ' . $order->order_number . ' berhasil dibatalkan.');
+            session()->flash('success', 'Pesanan '.$order->order_number.' berhasil dibatalkan.');
         }
     }
 
@@ -200,10 +220,10 @@ class PosDashboard extends Component
                 Table::where('id', $order->table_id)->update(['status' => 'available']);
             }
 
-            event(new \App\Events\OrderStatusUpdated($order));
-            
+            event(new OrderStatusUpdated($order));
+
             $this->loadOrders();
-            session()->flash('success', 'Pesanan ' . $order->order_number . ' diselesaikan.');
+            session()->flash('success', 'Pesanan '.$order->order_number.' diselesaikan.');
         }
     }
 
@@ -225,9 +245,9 @@ class PosDashboard extends Component
             if ($order->payment) {
                 $order->payment()->delete();
             }
-            
+
             $order->delete();
-            
+
             $this->loadOrders();
             session()->flash('success', 'Riwayat pesanan berhasil dihapus secara permanen.');
         }
@@ -236,5 +256,18 @@ class PosDashboard extends Component
     public function render()
     {
         return view('livewire.cashier.pos-dashboard')->layout('layouts.app');
+    }
+
+    /**
+     * Assign queue number based on payment method.
+     * Type 1 = Cash (priority), Type 2 = QRIS / non-cash.
+     */
+    private function getNextQueueNumber(int $queueType): int
+    {
+        $last = Order::whereDate('created_at', today())
+            ->where('queue_type', $queueType)
+            ->max('queue_number');
+
+        return ($last ?? 0) + 1;
     }
 }

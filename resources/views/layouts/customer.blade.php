@@ -199,13 +199,9 @@
 
                         <!-- Logo -->
                         <div class="hidden md:flex flex-col items-center pt-8 pb-6 px-4 border-b border-gray-100 dark:border-slate-700/50">
-                            <a href="{{ route('dashboard') }}" wire:navigate class="mb-2 flex items-center gap-2">
-                                <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
-                                    <span class="text-white font-bold text-xl">R</span>
-                                </div>
-                                <span class="font-bold text-xl tracking-tight text-black dark:text-white drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                            <a href="{{ route('dashboard') }}" wire:navigate class="mb-2 w-full flex justify-center">
+                                <x-application-logo class="h-20" />
                             </a>
-                            <p class="text-xs text-gray-500 dark:text-slate-400">Pesan Menu Lebih Mudah</p>
                         </div>
 
                         <!-- Nav Links -->
@@ -271,10 +267,14 @@
                 <!-- Mobile Navigation Header (Shown only on small screens) -->
                 <div class="md:hidden sticky top-0 z-50 shadow-sm/50 backdrop-blur-xl bg-brand-cream/95 dark:bg-emerald-950/90 border-b border-gray-100/50 dark:border-emerald-900/50 px-4 h-16 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center shadow-md">
-                            <span class="text-white font-bold text-sm">R</span>
-                        </div>
-                        <span class="font-bold text-lg tracking-tight text-black dark:text-white drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                        <a href="{{ route('dashboard') }}" wire:navigate.hover class="flex items-center gap-2">
+                            @if(file_exists(public_path('img/logo.png')))
+                                <img src="{{ asset('img/logo.png') }}" alt="YON RESTO" class="h-10 w-auto object-contain mix-blend-multiply dark:mix-blend-screen dark:invert">
+                            @else
+                                <i class="fa-solid fa-mug-hot text-[#5c3a21] dark:text-amber-500 text-xl drop-shadow-sm"></i>
+                                <span class="font-serif font-bold text-lg text-[#5c3a21] dark:text-amber-400 tracking-wider mt-1">YON RESTO</span>
+                            @endif
+                        </a>
                     </div>
                     
                     <div class="flex items-center gap-1">

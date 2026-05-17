@@ -1,99 +1,160 @@
-<div class="flex h-screen bg-[#F4F7F6] w-full overflow-hidden">
+<div x-data="{ sidebarOpen: window.innerWidth >= 1024 }" class="flex h-screen bg-[#F4F7F6] dark:bg-slate-900 w-full overflow-hidden transition-colors duration-300 relative">
     
+    <!-- Mobile Overlay (close sidebar when clicking outside) -->
+    <div
+        x-show="sidebarOpen && window.innerWidth < 1024"
+        x-transition:enter="transition-opacity ease-linear duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity ease-linear duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/40 z-20 lg:hidden"
+        x-cloak
+    ></div>
+
     <!-- Left Sidebar -->
-    <div class="w-64 bg-white shadow-sm flex flex-col justify-between shrink-0 h-full">
+    <div
+        x-show="sidebarOpen"
+        x-transition:enter="transition ease-in-out duration-300 transform"
+        x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition ease-in-out duration-300 transform"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="-translate-x-full"
+        class="fixed lg:relative z-30 lg:z-auto w-64 bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between shrink-0 h-full border-r border-gray-100 dark:border-slate-700 transition-colors duration-300"
+        x-cloak
+    >
         <div class="p-6">
             <!-- Logo -->
             <div class="flex items-center gap-3 mb-10">
-                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-xl">
-                    C
+                <div class="w-10 h-10 bg-[#5c3a21]/10 dark:bg-[#5c3a21]/30 rounded-full flex items-center justify-center text-[#5c3a21] dark:text-[#d3a87c] font-bold text-xl drop-shadow-sm">
+                    <i class="fa-solid fa-mug-hot"></i>
                 </div>
-                <span class="font-bold text-lg text-gray-800 tracking-tight">CHILI POS</span>
+                <span class="font-serif font-bold text-lg text-[#5c3a21] dark:text-[#d3a87c] tracking-wider">YON RESTO</span>
             </div>
 
             <!-- Nav Links -->
             <nav class="space-y-2">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-emerald-600 text-white rounded-full font-medium transition-colors">
+                <button @click="if(window.innerWidth < 1024) sidebarOpen = false" wire:click="setTab('menu')" class="w-full flex items-center gap-3 px-4 py-3 {{ $activeTab === 'menu' ? 'bg-emerald-600 text-white' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50' }} rounded-full font-medium transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                     Menu
-                </a>
-                <a href="{{ route('cashier.pos') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-full font-medium transition-colors">
+                </button>
+                <button @click="if(window.innerWidth < 1024) sidebarOpen = false" wire:click="setTab('tables')" class="w-full flex items-center gap-3 px-4 py-3 {{ $activeTab === 'tables' ? 'bg-emerald-600 text-white' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50' }} rounded-full font-medium transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     Table Services
-                </a>
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-full font-medium transition-colors">
+                </button>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-full font-medium transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    Accounting
-                </a>
-                <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-full font-medium transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    Settings
+                    Back to Dashboard
                 </a>
             </nav>
         </div>
 
-        <div class="p-6">
+        <div class="p-6 border-t border-gray-100 dark:border-slate-700">
             <!-- Users profiles -->
             <div class="space-y-3 mb-6">
-                <div class="flex items-center gap-3 px-3 py-2 border border-gray-100 rounded-full cursor-pointer hover:bg-gray-50">
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700">
+                <div class="flex items-center gap-3 px-3 py-2 border border-gray-100 dark:border-slate-700 rounded-full cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
                         {{ substr(auth()->user()->name, 0, 2) }}
                     </div>
-                    <span class="text-sm font-medium text-gray-700 truncate">{{ auth()->user()->name }}</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-slate-300 truncate">{{ auth()->user()->name }}</span>
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="flex items-center gap-3 text-gray-500 hover:text-red-600 font-medium transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Logout
-                </button>
-            </form>
+            <button wire:click="logout" class="flex items-center gap-3 text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Logout
+            </button>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-        
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
         <!-- Header -->
-        <header class="h-20 flex items-center px-8 shrink-0">
-            <div class="flex items-center w-full max-w-2xl relative">
-                <div class="absolute left-4 text-gray-400">
+        <header class="h-16 md:h-20 flex items-center px-4 md:px-8 shrink-0 gap-3">
+            <!-- Sidebar Toggle Button -->
+            <button
+                @click="sidebarOpen = !sidebarOpen"
+                class="p-2.5 bg-white dark:bg-slate-800 rounded-full shadow-sm text-gray-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors border border-gray-100 dark:border-slate-700 shrink-0"
+                :title="sidebarOpen ? 'Tutup menu' : 'Buka menu'"
+            >
+                <svg x-show="!sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="flex items-center flex-1 max-w-2xl relative mr-2">
+                <div class="absolute left-4 text-gray-400 dark:text-slate-500 hidden md:block">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search Product here..." class="w-full pl-12 pr-4 py-3 bg-white border-none rounded-full shadow-sm focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-medium text-gray-700">
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search..." class="w-full pl-4 md:pl-12 pr-4 py-2 md:py-3 bg-white dark:bg-slate-800 border-none rounded-full shadow-sm focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-medium text-gray-700 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 transition-colors">
             </div>
-            <div class="ml-auto flex items-center gap-4">
-                <button wire:click="openCheckout" class="relative p-3 bg-white rounded-full shadow-sm text-gray-600 hover:text-emerald-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <div class="ml-auto flex items-center gap-2 md:gap-4 shrink-0">
+                <!-- Dark Mode Toggle -->
+                <button @click="darkMode = !darkMode" class="p-2 md:p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-gray-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors border border-gray-100 dark:border-slate-700">
+                    <svg x-show="!darkMode" class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg x-show="darkMode" x-cloak class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </button>
+
+                @if($activeTab === 'menu')
+                <!-- Order Type Toggle -->
+                <div class="flex bg-white dark:bg-slate-800 rounded-full p-1 shadow-sm border border-gray-100 dark:border-slate-700 hidden sm:flex">
+                    <button wire:click="$set('orderType', 'dine-in')" class="px-3 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm font-bold transition-colors {{ $orderType === 'dine-in' ? 'bg-emerald-100 text-emerald-800' : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
+                        Dine-In
+                    </button>
+                    <button wire:click="$set('orderType', 'takeaway')" class="px-3 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm font-bold transition-colors {{ $orderType === 'takeaway' ? 'bg-emerald-100 text-emerald-800' : 'text-gray-500 hover:bg-gray-50' }}">
+                        Takeaway
+                    </button>
+                </div>
+                <!-- Mobile Order Type Toggle -->
+                <button wire:click="$set('orderType', '{{ $orderType === 'dine-in' ? 'takeaway' : 'dine-in' }}')" class="sm:hidden px-3 py-2 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold shadow-sm">
+                    {{ $orderType === 'dine-in' ? 'Dine-In' : 'Takeaway' }}
+                </button>
+                
+                <button wire:click="openCheckout" class="relative p-2 md:p-3 bg-white rounded-full shadow-sm text-gray-600 hover:text-emerald-600 transition-colors">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     @if(count($cart) > 0)
-                        <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1">{{ array_sum(array_column($cart, 'quantity')) }}</span>
+                        <span class="absolute top-0 right-0 w-4 h-4 md:w-5 md:h-5 bg-red-500 text-white text-[10px] md:text-xs font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1">{{ array_sum(array_column($cart, 'quantity')) }}</span>
                     @endif
                 </button>
+                @else
+                <!-- Dashboard Info pill -->
+                <div class="flex items-center gap-2 bg-white dark:bg-slate-800 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-slate-700">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-sm font-bold text-gray-700 dark:text-slate-300">Live Services</span>
+                </div>
+                @endif
             </div>
         </header>
 
+        @if($activeTab === 'menu')
+
         <!-- Categories -->
-        <div class="px-8 mb-6 shrink-0 no-scrollbar overflow-x-auto">
-            <div class="flex gap-4 min-w-max pb-2">
-                <button wire:click="setCategory(null)" class="flex flex-col items-center justify-center w-24 h-28 rounded-2xl transition-all shadow-sm {{ is_null($activeCategoryId) ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500' : 'bg-white text-gray-500 border border-transparent' }}">
+        <div class="px-4 md:px-8 mb-6 shrink-0 no-scrollbar overflow-x-auto">
+            <div class="flex gap-3 md:gap-4 min-w-max pb-2">
+                <button wire:click="setCategory(null)" class="flex flex-col items-center justify-center w-24 h-28 rounded-2xl transition-all shadow-sm {{ is_null($activeCategoryId) ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-2 border-emerald-500' : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border border-transparent' }}">
                     <div class="mb-2">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <i class="fas fa-th-large text-3xl"></i>
                     </div>
                     <span class="font-bold text-sm">All</span>
                     <span class="text-xs opacity-70 mt-1">{{ \App\Models\Menu::count() }} items</span>
                 </button>
                 @foreach($categories as $category)
-                    <button wire:click="setCategory({{ $category->id }})" class="flex flex-col items-center justify-center w-28 h-28 rounded-2xl transition-all shadow-sm {{ $activeCategoryId == $category->id ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500' : 'bg-white text-gray-500 border border-transparent hover:bg-gray-50' }}">
+                    <button wire:click="setCategory({{ $category->id }})" class="flex flex-col items-center justify-center w-28 h-28 rounded-2xl transition-all shadow-sm {{ $activeCategoryId == $category->id ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-2 border-emerald-500' : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border border-transparent hover:bg-gray-50 dark:hover:bg-slate-700/50' }}">
                         <div class="mb-2 text-emerald-600">
-                            @if($category->is_drink)
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"></path></svg>
+                            @if(strtolower($category->name) === 'makanan')
+                                <i class="fas fa-utensils text-3xl"></i>
+                            @elseif(strtolower($category->name) === 'minuman')
+                                <i class="fas fa-glass-water text-3xl"></i>
+                            @elseif(strtolower($category->name) === 'snack')
+                                <i class="fas fa-hamburger text-3xl"></i>
+                            @elseif(strtolower($category->name) === 'dessert')
+                                <i class="fas fa-cheese text-3xl"></i>
                             @else
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <i class="fas fa-utensils text-3xl"></i>
                             @endif
                         </div>
-                        <span class="font-bold text-sm text-gray-800">{{ $category->name }}</span>
+                        <span class="font-bold text-sm text-gray-800 dark:text-slate-200">{{ $category->name }}</span>
                         <span class="text-xs text-gray-400 mt-1">{{ $category->menus()->count() }} items</span>
                     </button>
                 @endforeach
@@ -101,15 +162,15 @@
         </div>
 
         <!-- Menu Grid -->
-        <div class="flex-1 px-8 overflow-y-auto no-scrollbar pb-32">
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="flex-1 px-4 md:px-8 overflow-y-auto no-scrollbar pb-32">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 @foreach($menus as $menu)
                     @php
                         $inCart = collect($cart)->firstWhere('id', $menu->id);
                     @endphp
-                    <div class="bg-white rounded-3xl p-4 shadow-sm flex flex-col transition-all {{ $inCart ? 'border-2 border-emerald-500' : 'border border-transparent hover:shadow-md' }}">
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-4 shadow-sm flex flex-col transition-all border {{ $inCart ? 'border-emerald-500 border-2' : 'border-transparent dark:border-slate-700 hover:shadow-md' }}">
                         <!-- Image -->
-                        <div class="h-40 w-full mb-4 relative rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <div class="h-40 w-full mb-4 relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-slate-700 flex items-center justify-center">
                             @if($menu->image)
                                 <img src="{{ asset('storage/' . $menu->image) }}" class="w-full h-full object-cover" alt="{{ $menu->name }}">
                             @else
@@ -124,7 +185,7 @@
                         
                         <!-- Details -->
                         <div class="flex-1">
-                            <h3 class="font-bold text-gray-800 text-sm leading-snug line-clamp-2 mb-1">{{ $menu->name }}</h3>
+                            <h3 class="font-bold text-gray-800 dark:text-slate-200 text-sm leading-snug line-clamp-2 mb-1">{{ $menu->name }}</h3>
                             <div class="flex items-center justify-between mt-3">
                                 <span class="font-bold text-emerald-600">Rp {{ number_format($menu->price, 0, ',', '.') }}</span>
                                 <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-right">
@@ -136,17 +197,17 @@
                         <!-- Add Button -->
                         <div class="mt-4">
                             @if($inCart)
-                                <div class="flex items-center justify-between bg-emerald-50 rounded-xl p-1 border border-emerald-100">
-                                    <button wire:click="updateQuantity({{ $menu->id }}, -1)" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-emerald-600 shadow-sm hover:bg-emerald-100 transition-colors">
+                                <div class="flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/30 rounded-xl p-1 border border-emerald-100 dark:border-emerald-800">
+                                    <button wire:click="updateQuantity({{ $menu->id }}, -1)" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm hover:bg-emerald-100 dark:hover:bg-slate-600 transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
                                     </button>
-                                    <span class="font-bold text-emerald-800">{{ $inCart['quantity'] }}</span>
-                                    <button wire:click="updateQuantity({{ $menu->id }}, 1)" class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition-colors">
+                                    <span class="font-bold text-emerald-800 dark:text-emerald-300">{{ $inCart['quantity'] }}</span>
+                                    <button wire:click="updateQuantity({{ $menu->id }}, 1)" class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     </button>
                                 </div>
                             @else
-                                <button wire:click="addToCart({{ $menu->id }})" class="w-full py-2.5 bg-emerald-50 text-emerald-700 font-bold text-sm rounded-xl hover:bg-emerald-100 transition-colors">
+                                <button wire:click="addToCart({{ $menu->id }})" class="w-full py-2.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold text-sm rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors border border-transparent dark:border-emerald-800">
                                     Add to Dish
                                 </button>
                             @endif
@@ -156,11 +217,12 @@
             </div>
         </div>
 
-        <!-- Tables Bar (Bottom) -->
-        <div class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 py-4 px-8 shrink-0 no-scrollbar overflow-x-auto">
-            <div class="flex items-center gap-4 min-w-max">
-                <span class="text-sm font-bold text-gray-500 mr-2 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <!-- Tables Bar (Bottom) - Only show when Dine-In -->
+        @if($orderType === 'dine-in')
+        <div class="absolute bottom-0 left-0 right-0 bg-emerald-600 dark:bg-emerald-800 backdrop-blur-md border-t border-emerald-500 dark:border-emerald-700 py-3 md:py-4 px-4 md:px-8 shrink-0 no-scrollbar overflow-x-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.15)] z-10">
+            <div class="flex items-center gap-3 md:gap-4 min-w-max">
+                <span class="text-sm font-bold text-white mr-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     Select Table:
                 </span>
                 @foreach($tables as $table)
@@ -171,49 +233,114 @@
                     <button 
                         @if(!$isOccupied || $isSelected) wire:click="setTable({{ $table->id }})" @endif
                         class="flex items-center gap-3 px-4 py-2 rounded-full border transition-all 
-                        {{ $isSelected ? 'border-emerald-500 ring-2 ring-emerald-200 bg-emerald-50' : ($isOccupied ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed' : 'border-gray-200 bg-white hover:border-emerald-300') }}">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm 
-                            {{ $isSelected ? 'bg-emerald-500 text-white' : ($isOccupied ? 'bg-gray-300 text-gray-600' : 'bg-yellow-400 text-yellow-900') }}">
+                        {{ $isSelected ? 'border-emerald-500 ring-2 ring-emerald-200 dark:ring-emerald-900 bg-emerald-50 dark:bg-emerald-900/30' : ($isOccupied ? 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 opacity-60 cursor-not-allowed' : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 dark:hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-700/50') }}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-sm
+                            {{ $isSelected ? 'bg-emerald-500 text-white' : ($isOccupied ? 'bg-gray-300 dark:bg-slate-600 text-gray-600 dark:text-slate-400' : 'bg-yellow-400 text-yellow-900') }}">
                             T{{ $table->table_number }}
                         </div>
                         <div class="text-left">
-                            <div class="text-xs font-bold text-gray-800">{{ $isOccupied && !$isSelected ? 'Occupied' : 'Table ' . $table->table_number }}</div>
-                            <div class="text-[10px] text-gray-400">{{ $table->capacity }} seats</div>
+                            <div class="text-xs font-bold text-gray-800 dark:text-slate-200">{{ $isOccupied && !$isSelected ? 'Occupied' : 'Table ' . $table->table_number }}</div>
+                            <div class="text-[10px] text-gray-400 dark:text-slate-500">{{ $table->capacity }} seats</div>
                         </div>
                     </button>
                 @endforeach
             </div>
         </div>
+        @else
+        <!-- Takeaway Bar -->
+        <div class="absolute bottom-0 left-0 right-0 bg-emerald-600 dark:bg-emerald-800 backdrop-blur-md border-t border-emerald-500 dark:border-emerald-700 py-3 md:py-4 px-4 md:px-8 shrink-0 flex items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.15)] z-10">
+            <div class="flex items-center gap-3 text-emerald-900 dark:text-emerald-100 bg-white/90 dark:bg-slate-900/50 px-4 py-2 rounded-full border border-white/20 dark:border-emerald-900">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span class="font-bold text-sm">Takeaway Mode Active - No Table Required</span>
+            </div>
+        </div>
+        @endif
+        @endif
+
+        @if($activeTab === 'tables')
+        <div class="flex-1 w-full h-full bg-[#F4F7F6] dark:bg-slate-900 flex flex-col overflow-y-auto no-scrollbar">
+            <!-- Top: Interactive Table Map -->
+            <div class="w-full p-6 md:p-8 shrink-0">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-slate-200 mb-6 flex items-center gap-3">
+                    <svg class="w-6 h-6 md:w-7 md:h-7 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Table Status Map
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 pb-6">
+                    @foreach($tables as $table)
+                        @php
+                            $isOccupied = $table->status === 'occupied';
+                        @endphp
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center transition-all hover:shadow-md cursor-pointer {{ $isOccupied ? 'border-red-200 dark:border-red-900 ring-2 ring-red-100 dark:ring-red-900/50 bg-red-50/30 dark:bg-red-900/10' : 'hover:border-emerald-300 dark:hover:border-emerald-600' }}">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-bold text-2xl md:text-3xl mb-3 md:mb-4 shadow-sm shrink-0 {{ $isOccupied ? 'bg-red-500 text-white shadow-red-200' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400' }}">
+                                T{{ $table->table_number }}
+                            </div>
+                            <h3 class="font-bold text-base md:text-lg text-gray-800 dark:text-slate-200 mb-1 text-center truncate w-full">{{ $isOccupied ? 'Occupied' : 'Available' }}</h3>
+                            <p class="text-xs md:text-sm font-medium text-gray-400 dark:text-slate-500">{{ $table->capacity }} Seats</p>
+                            @if($isOccupied)
+                                <div class="mt-4 md:mt-5 px-3 md:px-4 py-1.5 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-full flex items-center justify-center gap-2 w-full max-w-[100px]">
+                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
+                                    In Use
+                                </div>
+                            @else
+                                <div class="mt-4 md:mt-5 px-3 md:px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-full flex items-center justify-center gap-2 w-full max-w-[100px]">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                                    Ready
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+    
+            <!-- Bottom: Dashboard/Payments List -->
+            <div class="w-full shrink-0 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 relative z-10 shadow-2xl min-h-[500px] flex-1">
+                @livewire('cashier.pos-dashboard')
+            </div>
+        </div>
+        @endif
     </div>
 
-    <!-- Right Side / Slide-over Cart & Checkout -->
-    <div class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl border-l border-gray-100 transform transition-transform duration-300 ease-in-out z-40 {{ $showCheckout ? 'translate-x-0' : 'translate-x-full' }}">
-        <div class="h-full flex flex-col">
-            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-gray-800">Current Order</h2>
-                <button wire:click="closeCheckout" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    @if($activeTab === 'menu')
+    <!-- Centered Cart & Checkout Modal -->
+    <div class="fixed inset-0 z-40 flex items-center justify-center p-4 sm:p-6 transition-all duration-300 {{ $showCheckout ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none' }}">
+        
+        <!-- Backdrop -->
+        <div wire:click="closeCheckout" class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 {{ $showCheckout ? 'opacity-100' : 'opacity-0' }}"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white dark:bg-slate-800 shadow-2xl rounded-3xl w-full max-w-md max-h-[95vh] overflow-hidden flex flex-col relative transform transition-all duration-300 ease-in-out z-50 {{ $showCheckout ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4' }}">
+            <div class="px-6 py-4 md:py-5 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between shrink-0">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-slate-200">Current Order</h2>
+                <button wire:click="closeCheckout" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors bg-gray-100 dark:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
             <div class="p-6 pb-2">
+                @if($errors->has('table'))
+                    <div class="mb-4 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium border border-red-100 flex items-center gap-2">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        {{ $errors->first('table') }}
+                    </div>
+                @endif
+                
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Customer Name</label>
-                    <input type="text" wire:model.live.debounce.300ms="customerName" placeholder="Walk-in Customer" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">Customer Name</label>
+                    <input type="text" wire:model.live.debounce.300ms="customerName" placeholder="Guest" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-gray-800 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500">
                 </div>
             </div>
 
             <!-- Cart Items -->
             <div class="flex-1 overflow-y-auto px-6 py-2 space-y-4 no-scrollbar">
                 @if(empty($cart))
-                    <div class="h-full flex flex-col items-center justify-center text-gray-400">
-                        <svg class="w-16 h-16 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-slate-500">
+                        <svg class="w-16 h-16 mb-4 text-gray-200 dark:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         <p class="text-sm font-medium">Cart is empty</p>
                     </div>
                 @endif
                 @foreach($cart as $item)
                     <div class="flex gap-3 items-center">
-                        <div class="w-12 h-12 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+                        <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-slate-700 shrink-0 overflow-hidden">
                             @if($item['image'])
                                 <img src="{{ $item['image'] }}" class="w-full h-full object-cover">
                             @else
@@ -235,31 +362,31 @@
             </div>
 
             <!-- Totals & Payment -->
-            <div class="px-6 py-6 bg-gray-50 border-t border-gray-100 rounded-t-3xl mt-auto">
+            <div class="px-6 py-6 bg-gray-50 dark:bg-slate-700/50 border-t border-gray-100 dark:border-slate-600 rounded-t-3xl mt-auto">
                 <div class="space-y-2 mb-6">
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 font-medium">Subtotal</span>
-                        <span class="text-gray-800 font-bold">Rp {{ number_format($this->subtotal, 0, ',', '.') }}</span>
+                        <span class="text-gray-500 dark:text-slate-400 font-medium">Subtotal</span>
+                        <span class="text-gray-800 dark:text-slate-200 font-bold">Rp {{ number_format($this->subtotal, 0, ',', '.') }}</span>
                     </div>
                     @if($this->taxAmount > 0)
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 font-medium">Tax</span>
-                        <span class="text-gray-800 font-bold">Rp {{ number_format($this->taxAmount, 0, ',', '.') }}</span>
+                        <span class="text-gray-500 dark:text-slate-400 font-medium">Tax</span>
+                        <span class="text-gray-800 dark:text-slate-200 font-bold">Rp {{ number_format($this->taxAmount, 0, ',', '.') }}</span>
                     </div>
                     @endif
-                    <div class="flex justify-between text-lg pt-2 border-t border-gray-200 mt-2">
-                        <span class="text-gray-800 font-bold">Total</span>
-                        <span class="text-emerald-600 font-extrabold">Rp {{ number_format($this->total, 0, ',', '.') }}</span>
+                    <div class="flex justify-between text-lg pt-2 border-t border-gray-200 dark:border-slate-600 mt-2">
+                        <span class="text-gray-800 dark:text-slate-200 font-bold">Total</span>
+                        <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">Rp {{ number_format($this->total, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Payment Method</label>
+                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">Payment Method</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button wire:click="$set('paymentMethod', 'cash')" class="py-2.5 rounded-xl text-sm font-bold transition-colors border {{ $paymentMethod === 'cash' ? 'bg-emerald-100 border-emerald-500 text-emerald-800' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50' }}">
+                        <button wire:click="$set('paymentMethod', 'cash')" class="py-2.5 rounded-xl text-sm font-bold transition-colors border {{ $paymentMethod === 'cash' ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-400' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                             Cash
                         </button>
-                        <button wire:click="$set('paymentMethod', 'qris')" class="py-2.5 rounded-xl text-sm font-bold transition-colors border {{ $paymentMethod === 'qris' ? 'bg-emerald-100 border-emerald-500 text-emerald-800' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50' }}">
+                        <button wire:click="$set('paymentMethod', 'qris')" class="py-2.5 rounded-xl text-sm font-bold transition-colors border {{ $paymentMethod === 'qris' ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500 text-emerald-800 dark:text-emerald-400' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                             QR Code
                         </button>
                     </div>
@@ -267,18 +394,18 @@
 
                 @if($paymentMethod === 'cash')
                 <div class="mb-6">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Amount Given</label>
+                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">Amount Given</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">Rp</span>
-                        <input type="number" wire:model.live.debounce.300ms="amountGiven" placeholder="0" class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                        <input type="number" wire:model.live.debounce.300ms="amountGiven" placeholder="0" class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold text-gray-800 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none placeholder-gray-300 dark:placeholder-slate-500">
                     </div>
                     @if($paymentError)
                         <p class="text-xs text-red-500 font-medium mt-1.5">{{ $paymentError }}</p>
                     @endif
                     @if($amountGiven && $amountGiven >= $this->total)
-                        <div class="flex justify-between items-center mt-2 px-3 py-2 bg-emerald-50 rounded-lg">
-                            <span class="text-xs font-bold text-emerald-600 uppercase">Change</span>
-                            <span class="text-sm font-extrabold text-emerald-700">Rp {{ number_format($amountGiven - $this->total, 0, ',', '.') }}</span>
+                        <div class="flex justify-between items-center mt-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-500 uppercase">Change</span>
+                            <span class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400">Rp {{ number_format($amountGiven - $this->total, 0, ',', '.') }}</span>
                         </div>
                     @endif
                 </div>
@@ -290,10 +417,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Overlay for slide-over -->
-    @if($showCheckout)
-        <div wire:click="closeCheckout" class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-30 transition-opacity"></div>
     @endif
 
     <!-- Payment Success Modal -->
@@ -312,7 +435,21 @@
                     </div>
                     
                     <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Payment Success!</h2>
-                    <div class="text-3xl font-black text-emerald-600 mb-8">Rp {{ number_format($completedOrder->total_price, 0, ',', '.') }}</div>
+                    <div class="text-3xl font-black text-emerald-600 mb-4">Rp {{ number_format($completedOrder->total_price, 0, ',', '.') }}</div>
+
+                    {{-- Queue Number Badge --}}
+                    @if($completedOrder->queue_number)
+                    <div class="mb-6 mx-auto">
+                        <div class="inline-flex flex-col items-center px-8 py-4 rounded-2xl border-2 {{ $completedOrder->queue_type === 1 ? 'bg-blue-50 border-blue-300' : 'bg-purple-50 border-purple-300' }}">
+                            <span class="text-xs font-bold uppercase tracking-widest {{ $completedOrder->queue_type === 1 ? 'text-blue-500' : 'text-purple-500' }} mb-1">
+                                {{ $completedOrder->queue_type === 1 ? '🪙 Antrian Cash' : '📱 Antrian QRIS' }}
+                            </span>
+                            <span class="text-6xl font-black {{ $completedOrder->queue_type === 1 ? 'text-blue-700' : 'text-purple-700' }}">
+                                {{ str_pad($completedOrder->queue_number, 3, '0', STR_PAD_LEFT) }}
+                            </span>
+                        </div>
+                    </div>
+                    @endif
                     
                     <div class="space-y-3 text-sm mb-8 px-4">
                         <div class="flex justify-between">

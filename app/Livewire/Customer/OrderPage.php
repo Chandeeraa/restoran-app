@@ -2,33 +2,39 @@
 
 namespace App\Livewire\Customer;
 
-use Livewire\Component;
-use App\Models\Menu;
+use App\Events\OrderPlaced;
 use App\Models\Category;
-use App\Models\Table;
+use App\Models\Discount;
+use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\StoreSetting;
-use App\Events\OrderPlaced;
-use App\Models\Discount;
+use App\Models\Table;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 class OrderPage extends Component
 {
     public $search = '';
+
     public $activeCategoryId = null;
-    
+
     public $cart = [];
+
     public $table_id = null;
+
     public $customer_name = '';
-    
+
     // Payment Options
     public $paymentMethod = 'cash'; // 'cash' or 'qris'
+
     public $showQrisModal = false;
+
     public $pendingOrder = null;
 
     // Success State
     public $showSuccess = false;
+
     public $completedOrder = null;
 
     // Cart Slide-over
@@ -36,7 +42,9 @@ class OrderPage extends Component
 
     // Discount
     public $discountCode = '';
+
     public $appliedDiscount = null;
+
     public $discountError = null;
 
     // Set initial table based on URL param
@@ -47,8 +55,8 @@ class OrderPage extends Component
         $this->table_number = request()->query('table');
         if ($this->table_number) {
             $table = Table::where('table_number', $this->table_number)
-                          ->orWhere('id', $this->table_number)
-                          ->first();
+                ->orWhere('id', $this->table_number)
+                ->first();
             if ($table) {
                 $this->table_id = $table->id;
                 if ($table->status === 'occupied') {
@@ -66,7 +74,9 @@ class OrderPage extends Component
     public function addToCart($menuId)
     {
         $menu = Menu::find($menuId);
-        if (!$menu || $menu->isOutOfStock()) return;
+        if (! $menu || $menu->isOutOfStock()) {
+            return;
+        }
 
         if (isset($this->cart[$menuId])) {
             $this->cart[$menuId]['quantity']++;
@@ -76,8 +86,8 @@ class OrderPage extends Component
                 'name' => $menu->name,
                 'price' => $menu->price,
                 'quantity' => 1,
-                'image' => $menu->image ? asset('storage/' . $menu->image) : null,
-                'notes' => ''
+                'image' => $menu->image ? asset('storage/'.$menu->image) : null,
+                'notes' => '',
             ];
         }
     }
@@ -98,7 +108,7 @@ class OrderPage extends Component
                 unset($this->cart[$menuId]);
             }
         }
-        
+
         if (empty($this->cart)) {
             $this->showCart = false;
         }
@@ -114,7 +124,9 @@ class OrderPage extends Component
     public function applyDiscount()
     {
         $this->discountError = null;
-        if (empty($this->discountCode)) return;
+        if (empty($this->discountCode)) {
+            return;
+        }
 
         $discount = Discount::where('code', strtoupper($this->discountCode))
             ->where('is_active', true)
@@ -122,8 +134,9 @@ class OrderPage extends Component
                 $query->whereNull('valid_until')->orWhere('valid_until', '>=', now());
             })->first();
 
-        if (!$discount) {
+        if (! $discount) {
             $this->discountError = 'Kode diskon tidak valid atau sudah kadaluarsa.';
+
             return;
         }
 
@@ -150,12 +163,14 @@ class OrderPage extends Component
 
     public function getDiscountAmountProperty()
     {
-        if (!$this->appliedDiscount) return 0;
-        
+        if (! $this->appliedDiscount) {
+            return 0;
+        }
+
         if ($this->appliedDiscount['type'] === 'percentage') {
             return $this->cartTotal * ($this->appliedDiscount['value'] / 100);
         }
-        
+
         return min($this->appliedDiscount['value'], $this->cartTotal);
     }
 
@@ -164,6 +179,7 @@ class OrderPage extends Component
         $setting = StoreSetting::first();
         $rate = $setting ? $setting->tax_rate : 0;
         $taxableAmount = $this->cartTotal - $this->discountAmount;
+
         return max(0, $taxableAmount * ($rate / 100));
     }
 
@@ -172,6 +188,7 @@ class OrderPage extends Component
         $setting = StoreSetting::first();
         $rate = $setting ? $setting->service_charge_rate : 0;
         $taxableAmount = $this->cartTotal - $this->discountAmount;
+
         return max(0, $taxableAmount * ($rate / 100));
     }
 
@@ -184,7 +201,7 @@ class OrderPage extends Component
     {
         $this->validate([
             'customer_name' => 'required|string|max:255',
-            'table_id' => 'required|exists:tables,id'
+            'table_id' => 'required|exists:tables,id',
         ], [
             'customer_name.required' => 'Nama wajib diisi.',
             'table_id.required' => 'Silakan pilih nomor meja Anda.',
@@ -192,19 +209,21 @@ class OrderPage extends Component
 
         if (empty($this->cart)) {
             $this->addError('cart', 'Keranjang belanja masih kosong.');
+
             return;
         }
 
         if ($this->paymentMethod === 'qris') {
             // Show QRIS Modal and wait for simulated payment
             $this->showQrisModal = true;
+
             return;
         }
 
         // Cash Payment - Process immediately
         $this->processFinalOrder('cash', 'unpaid');
     }
-    
+
     public function cancelQris()
     {
         $this->showQrisModal = false;
@@ -220,9 +239,9 @@ class OrderPage extends Component
     private function processFinalOrder($method, $status)
     {
         $table = Table::find($this->table_id);
-        
+
         $order = Order::create([
-            'order_number' => 'ORD-' . strtoupper(Str::random(8)),
+            'order_number' => 'ORD-'.strtoupper(Str::random(8)),
             'table_id' => $this->table_id,
             'customer_name' => $this->customer_name,
             'order_type' => 'dine-in', // Fixed to dine-in
@@ -273,28 +292,33 @@ class OrderPage extends Component
         $this->appliedDiscount = null;
         $this->discountCode = '';
     }
-    
+
     public function closeSuccess()
     {
         $orderNumber = $this->completedOrder->order_number;
         $this->showSuccess = false;
         $this->completedOrder = null;
-        
+
         return redirect()->route('customer.track', ['order_number' => $orderNumber]);
     }
 
     public function render()
     {
-        $categories = Category::all();
-        
-        $menus = Menu::query();
+        $categories = Category::orderBy('is_drink')->orderBy('name')->get();
+
+        $menus = Menu::query()
+            ->select('menus.*')
+            ->join('categories', 'menus.category_id', '=', 'categories.id')
+            ->orderBy('categories.is_drink')
+            ->orderBy('menus.name');
+
         if ($this->activeCategoryId) {
-            $menus->where('category_id', $this->activeCategoryId);
+            $menus->where('menus.category_id', $this->activeCategoryId);
         }
         if ($this->search) {
-            $menus->where('name', 'like', '%' . $this->search . '%');
+            $menus->where('menus.name', 'like', '%'.$this->search.'%');
         }
-        
+
         $tables = Table::orderBy('table_number')->get();
 
         return view('livewire.customer.order-page', [

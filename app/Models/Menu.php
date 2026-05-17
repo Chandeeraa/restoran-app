@@ -9,10 +9,10 @@ class Menu extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'is_available'        => 'boolean',
-        'is_best_seller'      => 'boolean',
-        'track_stock'         => 'boolean',
-        'stock'               => 'integer',
+        'is_available' => 'boolean',
+        'is_best_seller' => 'boolean',
+        'track_stock' => 'boolean',
+        'stock' => 'integer',
         'low_stock_threshold' => 'integer',
     ];
 
@@ -39,7 +39,9 @@ class Menu extends Model
      */
     public function deductStock(int $qty): void
     {
-        if (!$this->track_stock) return;
+        if (! $this->track_stock) {
+            return;
+        }
 
         $newStock = max(0, $this->stock - $qty);
         $this->stock = $newStock;

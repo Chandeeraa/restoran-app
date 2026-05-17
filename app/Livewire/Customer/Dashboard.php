@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Customer;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\Table;
-use App\Models\Reservation;
 use App\Models\Order;
-
+use App\Models\Reservation;
+use App\Models\Table;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
+use Livewire\Component;
 
 #[Layout('layouts.customer')]
 class Dashboard extends Component
@@ -17,14 +16,20 @@ class Dashboard extends Component
     public $tab = 'home';
 
     public $trackName = '';
+
     public $lastOrder = null;
 
     // Reservation Fields
     public $resName = '';
+
     public $resPhone = '';
+
     public $resDate = '';
+
     public $resTime = '';
+
     public $resGuests = 2;
+
     public $resNotes = '';
 
     public $showReservationSuccess = false;
@@ -49,17 +54,17 @@ class Dashboard extends Component
     public function trackOrder()
     {
         $this->validate([
-            'trackName' => 'required|string|min:2'
+            'trackName' => 'required|string|min:2',
         ]);
 
-        $order = Order::where('customer_name', 'like', '%' . $this->trackName . '%')
+        $order = Order::where('customer_name', 'like', '%'.$this->trackName.'%')
             ->latest()
             ->first();
 
         if ($order) {
             return redirect()->route('customer.track', ['order_number' => $order->order_number]);
         } else {
-            $this->addError('trackName', 'Pesanan atas nama "' . $this->trackName . '" tidak ditemukan.');
+            $this->addError('trackName', 'Pesanan atas nama "'.$this->trackName.'" tidak ditemukan.');
         }
     }
 
@@ -80,7 +85,7 @@ class Dashboard extends Component
             'reservation_time' => $this->resTime,
             'guest_count' => $this->resGuests,
             'notes' => $this->resNotes,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         $this->reset(['resName', 'resPhone', 'resDate', 'resTime', 'resGuests', 'resNotes']);
@@ -92,8 +97,7 @@ class Dashboard extends Component
         $tables = Table::orderBy('table_number')->get();
 
         return view('livewire.customer.dashboard', [
-            'tables' => $tables
+            'tables' => $tables,
         ]);
     }
 }
-

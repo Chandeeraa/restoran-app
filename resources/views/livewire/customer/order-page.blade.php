@@ -50,9 +50,9 @@
                 <button wire:click="setActiveCategory({{ $category->id }})" class="flex flex-col items-center justify-center w-20 h-24 rounded-2xl transition-all {{ $activeCategoryId == $category->id ? 'bg-brand-green text-white shadow-lg shadow-brand-green/30' : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-gray-600 dark:text-slate-400 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-brand-orange dark:hover:text-brand-yellow' }}">
                     <div class="mb-1 text-current">
                         @if(strtolower($category->name) === 'dessert')
-                            <i class="fas fa-cheese text-[22px] leading-none mb-0.5"></i>
+                            <i wire:ignore class="fas fa-cheese text-[22px] leading-none mb-0.5"></i>
                         @elseif(strtolower($category->name) === 'snack')
-                            <i class="fas fa-hamburger text-[22px] leading-none mb-0.5"></i>
+                            <i wire:ignore class="fas fa-hamburger text-[22px] leading-none mb-0.5"></i>
                         @elseif($category->is_drink)
                             <i class="bi bi-cup-straw text-2xl leading-none"></i>
                         @else

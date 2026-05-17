@@ -2,17 +2,18 @@
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\WithPagination;
 use App\Models\Reservation;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class ReservationManager extends Component
 {
     use WithPagination;
-    
+
     public $search = '';
+
     public $statusFilter = '';
 
     public function mount()
@@ -33,9 +34,9 @@ class ReservationManager extends Component
         $query = Reservation::query();
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('customer_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('customer_phone', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('customer_name', 'like', '%'.$this->search.'%')
+                    ->orWhere('customer_phone', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -44,7 +45,7 @@ class ReservationManager extends Component
         }
 
         return view('livewire.admin.reservation-manager', [
-            'reservations' => $query->orderBy('reservation_date', 'asc')->orderBy('reservation_time', 'asc')->paginate(10)
+            'reservations' => $query->orderBy('reservation_date', 'asc')->orderBy('reservation_time', 'asc')->paginate(10),
         ])->title('Reservations');
     }
 }
