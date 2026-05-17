@@ -72,8 +72,8 @@
         <!-- Prevent Rapid Clicks During Navigation -->
         <div x-show="isNavigating" x-cloak class="fixed inset-0 z-[9999] cursor-wait" style="background: transparent;"></div>
 
-        <!-- Floating Controls (Top Right) -->
-        <div class="fixed top-4 right-16 md:right-4 z-[60] flex items-center gap-3">
+        <!-- Floating Controls (Top Right - Desktop Only) -->
+        <div class="fixed top-4 right-4 z-[60] hidden md:flex items-center gap-3">
             <!-- Sidebar Toggle Button -->
             <button @click="sidebarOpen = !sidebarOpen" class="hidden md:flex p-2.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-sm border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors focus:outline-none items-center justify-center">
                 <svg x-show="sidebarOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
