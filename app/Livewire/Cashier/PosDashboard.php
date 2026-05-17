@@ -154,10 +154,10 @@ class PosDashboard extends Component
             'status' => 'success',
         ]);
 
-        // Assign queue number if not already assigned
+        // Assign queue number if not already assigned (single sequential queue per day)
         if (! $order->queue_number) {
             $queueType = $this->paymentMethod === 'cash' ? 1 : 2;
-            $queueNumber = $this->getNextQueueNumber($queueType);
+            $queueNumber = $this->getNextQueueNumber();
             $order->queue_type = $queueType;
             $order->queue_number = $queueNumber;
         }
@@ -259,13 +259,12 @@ class PosDashboard extends Component
     }
 
     /**
-     * Assign queue number based on payment method.
-     * Type 1 = Cash (priority), Type 2 = QRIS / non-cash.
+     * Assign queue number sequentially per day, regardless of payment method.
+     * queue_type is still stored (1=Cash, 2=QRIS) for display purposes.
      */
-    private function getNextQueueNumber(int $queueType): int
+    private function getNextQueueNumber(): int
     {
         $last = Order::whereDate('created_at', today())
-            ->where('queue_type', $queueType)
             ->max('queue_number');
 
         return ($last ?? 0) + 1;

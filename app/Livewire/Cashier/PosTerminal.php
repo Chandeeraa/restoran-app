@@ -119,12 +119,31 @@ class PosTerminal extends Component
         $this->cart = array_values($this->cart);
     }
 
-    public function setTable($tableId)
+    public function handleTableClick($tableId)
     {
-        if ($this->selectedTableId === $tableId) {
-            $this->selectedTableId = null; // Toggle off
+        $table = Table::find($tableId);
+        if (!$table) return;
+
+        if ($table->status === 'occupied') {
+            if ($this->selectedTableId === $tableId) {
+                $this->selectedTableId = null;
+            } else {
+                $table->status = 'available';
+                $table->save();
+            }
         } else {
-            $this->selectedTableId = $tableId;
+            if ($this->activeTab === 'tables') {
+                // In Table Map, clicking available table marks it as occupied
+                $table->status = 'occupied';
+                $table->save();
+            } else {
+                // In Menu tab, clicking available table selects it for the POS order
+                if ($this->selectedTableId === $tableId) {
+                    $this->selectedTableId = null; // Toggle off
+                } else {
+                    $this->selectedTableId = $tableId;
+                }
+            }
         }
     }
 
@@ -176,6 +195,11 @@ class PosTerminal extends Component
 
     public function processOrder()
     {
+        if (empty(trim($this->customerName))) {
+            $this->paymentError = 'Nama pelanggan wajib diisi!';
+            return;
+        }
+
         if ($this->paymentMethod === 'cash') {
             if (empty($this->amountGiven) || $this->amountGiven < $this->total) {
                 $this->paymentError = 'Amount given is less than total price.';
@@ -187,7 +211,7 @@ class PosTerminal extends Component
         $table = Table::find($this->selectedTableId);
 
         $queueType = $this->paymentMethod === 'cash' ? 1 : 2;
-        $queueNumber = $this->getNextQueueNumber($queueType);
+        $queueNumber = $this->getNextQueueNumber();
 
         $order = Order::create([
             'order_number' => 'ORD-'.strtoupper(Str::random(8)),
@@ -239,13 +263,11 @@ class PosTerminal extends Component
     }
 
     /**
-     * Assign queue number based on payment method.
-     * Type 1 = Cash (priority), Type 2 = QRIS / non-cash.
+     * Assign queue number sequentially for the day, regardless of payment method.
      */
-    private function getNextQueueNumber(int $queueType): int
+    private function getNextQueueNumber(): int
     {
         $last = Order::whereDate('created_at', today())
-            ->where('queue_type', $queueType)
             ->max('queue_number');
 
         return ($last ?? 0) + 1;

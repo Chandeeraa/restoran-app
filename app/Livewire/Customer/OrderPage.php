@@ -240,6 +240,10 @@ class OrderPage extends Component
     {
         $table = Table::find($this->table_id);
 
+        $queueType = $method === 'cash' ? 1 : 2;
+        $queueNumber = Order::whereDate('created_at', today())->max('queue_number');
+        $queueNumber = ($queueNumber ?? 0) + 1;
+
         $order = Order::create([
             'order_number' => 'ORD-'.strtoupper(Str::random(8)),
             'table_id' => $this->table_id,
@@ -248,6 +252,8 @@ class OrderPage extends Component
             'status' => 'pending',
             'payment_status' => $status,
             'payment_method' => $method,
+            'queue_type' => $queueType,
+            'queue_number' => $queueNumber,
             'subtotal_price' => $this->cartTotal,
             'tax_amount' => $this->taxAmount,
             'service_charge_amount' => $this->serviceChargeAmount,

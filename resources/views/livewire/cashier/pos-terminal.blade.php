@@ -230,10 +230,11 @@
                         $isOccupied = $table->status === 'occupied';
                         $isSelected = $selectedTableId === $table->id;
                     @endphp
-                    <button 
-                        @if(!$isOccupied || $isSelected) wire:click="setTable({{ $table->id }})" @endif
-                        class="flex items-center gap-3 px-4 py-2 rounded-full border transition-all 
-                        {{ $isSelected ? 'border-emerald-500 ring-2 ring-emerald-200 dark:ring-emerald-900 bg-emerald-50 dark:bg-emerald-900/30' : ($isOccupied ? 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 opacity-60 cursor-not-allowed' : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 dark:hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-700/50') }}">
+                    <button type="button"
+                        @if($isOccupied && !$isSelected) onclick="confirm('Kosongkan meja T{{ $table->table_number }} ini?') || event.stopImmediatePropagation()" @endif
+                        wire:click="handleTableClick({{ $table->id }})"
+                        class="flex items-center gap-3 px-4 py-2 rounded-full border transition-all hover:scale-105 active:scale-95
+                        {{ $isSelected ? 'border-emerald-500 ring-2 ring-emerald-200 dark:ring-emerald-900 bg-emerald-50 dark:bg-emerald-900/30' : ($isOccupied ? 'border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800/80 opacity-80 hover:opacity-100 hover:border-orange-300 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/30 cursor-pointer' : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 dark:hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-700/50') }}">
                         <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-sm
                             {{ $isSelected ? 'bg-emerald-500 text-white' : ($isOccupied ? 'bg-gray-300 dark:bg-slate-600 text-gray-600 dark:text-slate-400' : 'bg-yellow-400 text-yellow-900') }}">
                             T{{ $table->table_number }}
@@ -270,7 +271,10 @@
                         @php
                             $isOccupied = $table->status === 'occupied';
                         @endphp
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center transition-all hover:shadow-md cursor-pointer {{ $isOccupied ? 'border-red-200 dark:border-red-900 ring-2 ring-red-100 dark:ring-red-900/50 bg-red-50/30 dark:bg-red-900/10' : 'hover:border-emerald-300 dark:hover:border-emerald-600' }}">
+                        <div 
+                            @if($isOccupied) onclick="confirm('Kosongkan meja T{{ $table->table_number }} ini?') || event.stopImmediatePropagation()" @endif
+                            wire:click="handleTableClick({{ $table->id }})"
+                            class="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center transition-all hover:shadow-md cursor-pointer {{ $isOccupied ? 'border-red-200 dark:border-red-900 ring-2 ring-red-100 dark:ring-red-900/50 bg-red-50/30 dark:bg-red-900/10 hover:bg-red-100/50 dark:hover:bg-red-900/30' : 'hover:border-emerald-300 dark:hover:border-emerald-600' }}">
                             <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-bold text-2xl md:text-3xl mb-3 md:mb-4 shadow-sm shrink-0 {{ $isOccupied ? 'bg-red-500 text-white shadow-red-200' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400' }}">
                                 T{{ $table->table_number }}
                             </div>
@@ -325,8 +329,22 @@
                 @endif
                 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">Customer Name</label>
-                    <input type="text" wire:model.live.debounce.300ms="customerName" placeholder="Guest" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-gray-800 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500">
+                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">
+                        Customer Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        wire:model.live.debounce.300ms="customerName" 
+                        placeholder="Masukkan nama pelanggan..." 
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-700/50 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-gray-800 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 transition-colors
+                        {{ ($paymentError && str_contains($paymentError, 'Nama')) ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600' }}"
+                    >
+                    @if($paymentError && str_contains($paymentError, 'Nama'))
+                        <p class="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            {{ $paymentError }}
+                        </p>
+                    @endif
                 </div>
             </div>
 
