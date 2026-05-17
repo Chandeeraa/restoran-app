@@ -26,19 +26,19 @@
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Name</label>
-                        <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Email Address</label>
-                        <input type="email" wire:model="email" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <input type="email" wire:model="email" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Role</label>
-                        <select wire:model="role" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <select wire:model="role" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                             <option value="cashier">Cashier</option>
                             <option value="kitchen">Kitchen Staff</option>
                             <option value="waiter">Waiter / Server</option>
@@ -54,17 +54,17 @@
                                 <span class="text-xs text-gray-400 font-normal">(Leave blank to keep current)</span>
                             @endif
                         </label>
-                        <input type="password" wire:model="password" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <input type="password" wire:model="password" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                             {{ $isEditMode ? 'Update User' : 'Create User' }}
                         </button>
                         
                         @if($isEditMode)
-                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                                 Cancel
                             </button>
                         @endif
@@ -93,7 +93,7 @@
                                             @if($user->profile_photo_path)
                                                 <img class="h-10 w-10 rounded-full object-cover border border-gray-200 dark:border-slate-600" src="{{ Storage::url($user->profile_photo_path) }}" alt="{{ $user->name }}">
                                             @else
-                                                <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                                                <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-emerald-500 to-purple-500 flex items-center justify-center text-white font-bold">
                                                     {{ substr($user->name, 0, 1) }}
                                                 </div>
                                             @endif
@@ -127,7 +127,7 @@
                                             $badgeColor = 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
                                         } elseif ($user->role === 'waiter' || $user->role === 'customer') {
                                             $roleLabel = ucfirst($user->role);
-                                            $badgeColor = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+                                            $badgeColor = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
                                         }
                                     @endphp
                                     <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeColor }}">
@@ -142,7 +142,7 @@
                                             Protected
                                         </span>
                                     @elseif(auth()->id() !== $user->id)
-                                        <button wire:click="edit({{ $user->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3 transition-colors">Edit</button>
+                                        <button wire:click="edit({{ $user->id }})" class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 mr-3 transition-colors">Edit</button>
                                         <button wire:click="delete({{ $user->id }})" wire:confirm="Hapus user {{ $user->name }}? Tindakan ini tidak dapat dibatalkan." class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors">Delete</button>
                                     @else
                                         <span class="text-xs text-gray-400 italic">You</span>

@@ -3,7 +3,7 @@
         
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-slate-200 tracking-tight flex items-center gap-2">
-                <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                 Cashier POS & Payments
             </h2>
         </div>
@@ -33,7 +33,7 @@
                     <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari Order ID / Nama..." 
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500">
             </div>
         </div>
 
@@ -56,7 +56,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $order->order_number }}</div>
                                     @if($order->customer_name)
-                                        <div class="text-xs font-semibold text-indigo-700 mt-0.5">{{ $order->customer_name }}</div>
+                                        <div class="text-xs font-semibold text-emerald-700 mt-0.5">{{ $order->customer_name }}</div>
                                     @endif
                                     <div class="text-xs text-gray-400">{{ $order->created_at->format('H:i') }}</div>
                                 </td>
@@ -64,7 +64,7 @@
                                     <div class="text-sm text-gray-900 dark:text-slate-100">{{ $order->order_type === 'dine-in' ? 'Dine-in' : 'Takeaway' }}</div>
                                     @if($order->table)
                                         <div class="mt-1">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                                 Meja {{ $order->table->table_number }}
                                             </span>
                                         </div>
@@ -73,9 +73,9 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $order->status === 'pending' ? 'bg-orange-100 text-orange-800' : '' }}
-                                        {{ $order->status === 'cooking' ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ $order->status === 'cooking' ? 'bg-green-100 text-green-800' : '' }}
                                         {{ $order->status === 'ready' ? 'bg-green-100 text-green-800' : '' }}
-                                        {{ $order->status === 'served' ? 'bg-indigo-100 text-indigo-800' : '' }}
+                                        {{ $order->status === 'served' ? 'bg-emerald-100 text-emerald-800' : '' }}
                                         {{ $order->status === 'completed' ? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400' : '' }}
                                         {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}">
                                         {{ $order->status === 'cooking' ? 'Memasak' : ucfirst($order->status) }}
@@ -107,11 +107,11 @@
                                                 class="inline-flex items-center px-3 py-1.5 border border-red-200 text-xs font-semibold rounded-lg text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
                                                 Batalkan
                                             </button>
-                                            <button wire:click="openPaymentModal({{ $order->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                            <button wire:click="openPaymentModal({{ $order->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all">
                                                 Process Payment
                                             </button>
                                         @elseif($order->payment_status === 'paid')
-                                            <a href="{{ route('cashier.receipt', $order->id) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm text-xs font-semibold rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                                            <a href="{{ route('cashier.receipt', $order->id) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm text-xs font-semibold rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
                                                 <svg class="w-4 h-4 mr-1.5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                                 Receipt
                                             </a>
@@ -149,7 +149,7 @@
                                 Payment — {{ $selectedOrder->order_number }}
                             </h3>
                             @if($selectedOrder->customer_name)
-                                <p class="text-sm text-indigo-700 font-semibold mt-1">👤 {{ $selectedOrder->customer_name }}</p>
+                                <p class="text-sm text-emerald-700 font-semibold mt-1">👤 {{ $selectedOrder->customer_name }}</p>
                             @endif
                             <div class="mt-4 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl space-y-2">
                                 <div class="flex justify-between items-center text-sm">
@@ -183,7 +183,7 @@
                             <div class="mt-6 space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Metode Pembayaran</label>
-                                    <select wire:model.live="paymentMethod" class="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-xl">
+                                    <select wire:model.live="paymentMethod" class="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-xl">
                                         <option value="cash">Cash</option>
                                         <option value="qris">QRIS / E-Wallet</option>
                                         <option value="card">Debit / Credit Card</option>
@@ -197,16 +197,16 @@
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <span class="text-gray-500 dark:text-slate-400 sm:text-sm">Rp</span>
                                         </div>
-                                        <input type="number" wire:model.live.debounce.300ms="amountGiven" class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-xl py-2.5" placeholder="0">
+                                        <input type="number" wire:model.live.debounce.300ms="amountGiven" class="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-xl py-2.5" placeholder="0">
                                     </div>
                                     @if($paymentError)
                                         <p class="mt-1.5 text-sm text-red-600">{{ $paymentError }}</p>
                                     @endif
                                 </div>
 
-                                <div class="bg-blue-50 p-4 rounded-xl flex justify-between items-center">
-                                    <span class="text-blue-800 font-medium text-sm">Kembalian</span>
-                                    <span class="text-blue-900 font-bold text-lg">Rp {{ number_format($change, 0, ',', '.') }}</span>
+                                <div class="bg-green-50 p-4 rounded-xl flex justify-between items-center">
+                                    <span class="text-green-800 font-medium text-sm">Kembalian</span>
+                                    <span class="text-green-900 font-bold text-lg">Rp {{ number_format($change, 0, ',', '.') }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -214,10 +214,10 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 dark:bg-slate-800/50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-100 dark:border-slate-700/50">
-                    <button type="button" wire:click="processPayment" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" wire:click="processPayment" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Confirm Payment
                     </button>
-                    <button type="button" wire:click="closePaymentModal" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm px-6 py-2.5 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" wire:click="closePaymentModal" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm px-6 py-2.5 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Cancel
                     </button>
                 </div>

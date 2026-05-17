@@ -21,43 +21,43 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Kode Promo</label>
-                            <input type="text" wire:model="code" placeholder="PROMO10" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm uppercase" style="text-transform:uppercase">
+                            <input type="text" wire:model="code" placeholder="PROMO10" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm uppercase" style="text-transform:uppercase">
                             @error('code') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Deskripsi (Opsional)</label>
-                            <input type="text" wire:model="description" placeholder="Diskon 10% untuk pelanggan baru" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" wire:model="description" placeholder="Diskon 10% untuk pelanggan baru" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Tipe</label>
-                                <select wire:model.live="type" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <select wire:model.live="type" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                     <option value="percentage">Persentase (%)</option>
                                     <option value="fixed">Nominal Tetap (Rp)</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Nilai {{ $type === 'percentage' ? '(%)' : '(Rp)' }}</label>
-                                <input type="number" wire:model="value" placeholder="{{ $type === 'percentage' ? '10' : '50000' }}" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <input type="number" wire:model="value" placeholder="{{ $type === 'percentage' ? '10' : '50000' }}" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                 @error('value') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Batas Penggunaan (kosongkan = tak terbatas)</label>
-                            <input type="number" wire:model="max_uses" placeholder="100" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="number" wire:model="max_uses" placeholder="100" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
 
                         <div class="flex items-center">
-                            <input type="checkbox" wire:model="is_active" class="rounded border-gray-300 text-indigo-600">
+                            <input type="checkbox" wire:model="is_active" class="rounded border-gray-300 text-emerald-600">
                             <label class="ml-2 text-sm text-gray-700 dark:text-slate-300">Aktif</label>
                         </div>
                     </div>
 
                     <div class="mt-5 flex items-center gap-3">
-                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2 px-5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-all">
+                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-all">
                             {{ $isEditMode ? 'Update' : 'Buat Kode' }}
                         </button>
                         @if($isEditMode)
@@ -94,7 +94,7 @@
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap">
                                 @if($discount->type === 'percentage')
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">
                                         {{ $discount->value }}%
                                     </span>
                                 @else
@@ -114,7 +114,7 @@
                                 </button>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="edit({{ $discount->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3 transition-colors">Edit</button>
+                                <button wire:click="edit({{ $discount->id }})" class="text-emerald-600 hover:text-emerald-900 mr-3 transition-colors">Edit</button>
                                 <button wire:click="delete({{ $discount->id }})" wire:confirm="Hapus kode {{ $discount->code }}?" class="text-red-600 hover:text-red-900 transition-colors">Hapus</button>
                             </td>
                         </tr>

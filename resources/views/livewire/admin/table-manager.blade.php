@@ -20,13 +20,13 @@
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Table Number</label>
-                        <input type="text" wire:model="table_number" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g. T-01">
+                        <input type="text" wire:model="table_number" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="e.g. T-01">
                         @error('table_number') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Status</label>
-                        <select wire:model="status" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <select wire:model="status" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                             <option value="available">Available</option>
                             <option value="occupied">Occupied</option>
                         </select>
@@ -34,12 +34,12 @@
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                             {{ $isEditMode ? 'Update' : 'Save & Generate QR' }}
                         </button>
                         
                         @if($isEditMode)
-                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                                 Cancel
                             </button>
                         @endif
@@ -69,11 +69,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($table->qr_code)
                                         <button wire:click="openQrModal({{ $table->id }})" class="group relative">
-                                            <div class="h-16 w-16 bg-white dark:bg-slate-800 p-1 border rounded shadow-sm group-hover:border-indigo-300 transition-all">
+                                            <div class="h-16 w-16 bg-white dark:bg-slate-800 p-1 border rounded shadow-sm group-hover:border-emerald-300 transition-all">
                                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(50)->generate($table->qr_code) !!}
                                             </div>
                                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 rounded transition-opacity">
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                             </div>
                                         </button>
                                     @else
@@ -88,7 +88,7 @@
                                     </button>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button wire:click="edit({{ $table->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3 transition-colors">Edit</button>
+                                    <button wire:click="edit({{ $table->id }})" class="text-emerald-600 hover:text-emerald-900 mr-3 transition-colors">Edit</button>
                                     <button wire:click="delete({{ $table->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
                                 </td>
                             </tr>
@@ -122,13 +122,13 @@
                         <p class="text-sm text-gray-500 dark:text-slate-400 mb-6">Scan QR ini untuk langsung memesan di meja ini.</p>
                         
                         <div class="flex justify-center mb-6">
-                            <div class="p-4 bg-white dark:bg-slate-800 border-4 border-indigo-50 rounded-3xl shadow-inner">
+                            <div class="p-4 bg-white dark:bg-slate-800 border-4 border-emerald-50 rounded-3xl shadow-inner">
                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->margin(1)->generate($selectedTableQr) !!}
                             </div>
                         </div>
 
                         <div class="flex gap-3">
-                            <button onclick="window.print()" class="flex-1 inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2.5 px-4 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all">
+                            <button onclick="window.print()" class="flex-1 inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2.5 px-4 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-all">
                                 Print QR
                             </button>
                             <button wire:click="closeQrModal" class="flex-1 inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2.5 px-4 text-sm font-bold text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 transition-all">

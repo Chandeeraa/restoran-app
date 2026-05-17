@@ -5,43 +5,98 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Restoran App') }} - Staff Access</title>
+        <title>{{ config('app.name', 'Restoran App') }} - Login</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=outfit:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=outfit:400,500,600,700,800&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Tailwind Play CDN (Shortcut / Workaround for secured PC environment) -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            brand: {
+                                orange: '#f5a623',
+                                yellow: '#f8c23a',
+                                green: '#7ed321',
+                                cream: '#fcfaf2'
+                            }
+                        },
+                        fontFamily: {
+                            sans: ['Outfit', 'sans-serif'],
+                        }
+                    }
+                }
+            }
+        </script>
+        
         <style>
             body { font-family: 'Outfit', sans-serif; }
         </style>
     </head>
-    <body class="font-sans text-gray-900 dark:text-slate-100 antialiased bg-gray-50 dark:bg-slate-800/50">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900">
+    <body class="font-sans antialiased text-gray-900 bg-brand-cream min-h-screen">
+        <div class="min-h-screen flex w-full">
             
-            <!-- Abstract Background Shapes for Restaurant Vibe -->
-            <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div class="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-orange-500/40 to-red-600/40 blur-[100px] animate-pulse"></div>
-                <div class="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-blue-500/30 to-indigo-600/30 blur-[120px]"></div>
-            </div>
-
-            <div class="z-10 text-center mb-6">
-                <a href="/" wire:navigate class="flex flex-col items-center gap-3">
-                    <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <!-- Left Side: Image / Graphics -->
+            <div class="hidden md:flex md:w-5/12 lg:w-1/2 relative bg-brand-yellow overflow-hidden items-center justify-center" style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);">
+                
+                <!-- Logo -->
+                <div class="absolute top-8 left-8 flex items-center gap-2 z-20">
+                    <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
+                        <span class="text-white font-bold text-xl">R</span>
                     </div>
-                    <h1 class="text-3xl font-extrabold tracking-tight text-white drop-shadow-md">Restoran<span class="text-orange-400">App</span></h1>
-                </a>
+                    <span class="font-bold text-xl tracking-tight text-black drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                </div>
+                
+                <!-- Background decorative shapes -->
+                <div class="absolute inset-0 z-0 opacity-20">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M-50,200 Q150,-50 300,100 T700,300" fill="none" stroke="black" stroke-width="3"/>
+                        <path d="M100,500 Q250,150 500,400 T900,600" fill="none" stroke="black" stroke-width="2"/>
+                        <circle cx="200" cy="150" r="40" fill="none" stroke="black" stroke-width="2"/>
+                        <circle cx="600" cy="450" r="60" fill="none" stroke="black" stroke-width="3"/>
+                    </svg>
+                </div>
+                
+                <!-- Plates -->
+                <div class="relative w-full h-full flex flex-col items-center justify-center p-10 mt-10">
+                    <div class="w-80 h-80 rounded-full border-4 border-white shadow-2xl overflow-hidden z-10 -ml-20 mb-8 transform hover:scale-105 transition-transform duration-500 bg-white">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Salad" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-56 h-56 rounded-full border-4 border-white shadow-xl overflow-hidden z-10 ml-40 -mt-20 transform hover:scale-105 transition-transform duration-500 bg-white">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Healthy Food" class="w-full h-full object-cover">
+                    </div>
+                </div>
             </div>
 
-            <div class="z-10 w-full sm:max-w-md px-8 py-10 bg-white dark:bg-slate-800/95 backdrop-blur-xl shadow-2xl overflow-hidden sm:rounded-[2rem] border border-white/20">
-                {{ $slot }}
+            <!-- Right Side: Form -->
+            <div class="w-full md:w-7/12 lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative bg-brand-cream">
+                
+                <!-- Subtle decorative zig-zag lines -->
+                <div class="absolute top-1/4 right-10 text-brand-orange opacity-60 hidden sm:block">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <div class="absolute bottom-1/4 left-10 text-black opacity-30 hidden sm:block">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+
+                <div class="w-full max-w-md z-10">
+                    <!-- Mobile Logo -->
+                    <div class="md:hidden flex items-center justify-center mb-8 gap-2">
+                        <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-white font-bold text-xl">R</span>
+                        </div>
+                        <span class="font-bold text-2xl tracking-tight text-black drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                    </div>
+
+                    {{ $slot }}
+                </div>
             </div>
-            
-            <div class="z-10 mt-8 text-indigo-200/60 text-sm">
-                &copy; {{ date('Y') }} Restoran App. Internal System.
-            </div>
+
         </div>
     </body>
 </html>

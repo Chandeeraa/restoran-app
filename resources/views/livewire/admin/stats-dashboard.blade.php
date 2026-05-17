@@ -5,27 +5,50 @@
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-slate-200 tracking-tight flex items-center gap-2">
-                    <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     Dashboard Statistik
                 </h2>
                 <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">Ringkasan harian — {{ now()->translatedFormat('l, d F Y') }} • Auto-refresh setiap 60 detik</p>
             </div>
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                    Print Laporan
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 z-50 overflow-hidden">
-                    <a href="{{ route('admin.report.print', ['period' => 'today']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors">
-                        📅 Laporan Hari Ini
-                    </a>
-                    <a href="{{ route('admin.report.print', ['period' => 'month']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors">
-                        📆 Laporan Bulan Ini
-                    </a>
-                    <a href="{{ route('admin.report.print', ['period' => 'all']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors">
-                        📊 Semua Transaksi
-                    </a>
+            <div class="flex gap-3">
+                <!-- Dropdown Filter Waktu -->
+                <div x-data="{ open: false }" class="relative z-[50]">
+                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-200 dark:border-slate-700">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        Filter Waktu
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
+                        <a href="#" @click.prevent="open = false" class="flex items-center justify-between px-4 py-3 text-sm text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30">
+                            Hari Ini
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </a>
+                        <a href="#" @click.prevent="open = false" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                            Minggu Ini
+                        </a>
+                        <a href="#" @click.prevent="open = false" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                            Bulan Ini
+                        </a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: false }" class="relative z-[50]">
+                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Print Laporan
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
+                        <a href="{{ route('admin.report.print', ['period' => 'today']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
+                            📅 Laporan Hari Ini
+                        </a>
+                        <a href="{{ route('admin.report.print', ['period' => 'month']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
+                            📆 Laporan Bulan Ini
+                        </a>
+                        <a href="{{ route('admin.report.print', ['period' => 'all']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
+                            📊 Semua Transaksi
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,9 +56,9 @@
         <!-- Stat Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
             <!-- Revenue -->
-            <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl p-5 text-white shadow-lg shadow-indigo-200 col-span-2">
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-5 text-white shadow-lg shadow-emerald-200 col-span-2">
                 <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-white dark:bg-slate-800/20 p-2 rounded-xl text-indigo-600 dark:text-white">
+                    <div class="bg-white dark:bg-slate-800/20 p-2 rounded-xl text-emerald-600 dark:text-white">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <span class="text-sm font-medium opacity-80">Total Pendapatan Hari Ini</span>
@@ -98,7 +121,7 @@
                                     </div>
                                 </div>
                                 <div class="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 transition-all duration-500"
+                                    <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-500"
                                          style="width: {{ ($item->total_qty / $maxQty) * 100 }}%"></div>
                                 </div>
                             </div>
@@ -110,7 +133,7 @@
             <!-- Table Status -->
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
                 <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M10 6v12M14 6v12"></path></svg>
+                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M10 6v12M14 6v12"></path></svg>
                     Status Meja
                 </h3>
                 @php
@@ -159,7 +182,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700/50 flex justify-between items-center">
                 <h3 class="text-base font-bold text-gray-800 dark:text-slate-200">Pesanan Terbaru Hari Ini</h3>
-                <a href="{{ route('cashier.pos') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Lihat Semua →</a>
+                <a href="{{ route('cashier.pos') }}" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium">Lihat Semua →</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-700/50">
@@ -181,7 +204,7 @@
                                 </td>
                                 <td class="px-6 py-3 text-sm text-gray-700 dark:text-slate-300 font-medium">{{ $order->customer_name ?? '-' }}</td>
                                 <td class="px-6 py-3">
-                                    <span class="text-xs font-medium {{ $order->order_type === 'dine-in' ? 'text-purple-600' : 'text-blue-600' }}">
+                                    <span class="text-xs font-medium {{ $order->order_type === 'dine-in' ? 'text-purple-600' : 'text-green-600' }}">
                                         {{ $order->order_type === 'dine-in' ? 'Dine-in' . ($order->table ? ' · Meja ' . $order->table->table_number : '') : 'Takeaway' }}
                                     </span>
                                 </td>

@@ -110,7 +110,7 @@ new class extends Component
                 @if(auth()->user()->profile_photo_path)
                     <img src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" class="rounded-full h-20 w-20 object-cover border border-gray-200 dark:border-slate-700">
                 @else
-                    <div class="h-20 w-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
+                    <div class="h-20 w-20 rounded-full bg-gradient-to-tr from-emerald-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
                         {{ substr(auth()->user()->name, 0, 1) }}
                     </div>
                 @endif
@@ -146,7 +146,7 @@ new class extends Component
                     <p class="text-sm mt-2 text-gray-800 dark:text-slate-200">
                         {{ __('Your email address is unverified.') }}
 
-                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>

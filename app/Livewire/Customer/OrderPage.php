@@ -2,90 +2,84 @@
 
 namespace App\Livewire\Customer;
 
+use Livewire\Component;
 use App\Models\Menu;
 use App\Models\Category;
+use App\Models\Table;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Table;
-use Livewire\Component;
+use App\Models\StoreSetting;
+use App\Events\OrderPlaced;
+use App\Models\Discount;
 use Illuminate\Support\Str;
 
 class OrderPage extends Component
 {
-    public $table_id = null;
-    public $table_number = null;
-    public $categories = [];
-    public $menus = [];
+    public $search = '';
     public $activeCategoryId = null;
     
     public $cart = [];
-    public $showCart = false;
-    public $orderType = 'dine-in';
+    public $table_id = null;
     public $customer_name = '';
-    public $tables = [];
+    
+    // Payment Options
+    public $paymentMethod = 'cash'; // 'cash' or 'qris'
+    public $showQrisModal = false;
+    public $pendingOrder = null;
+
+    // Success State
+    public $showSuccess = false;
+    public $completedOrder = null;
+
+    // Cart Slide-over
+    public $showCart = false;
 
     // Discount
     public $discountCode = '';
     public $appliedDiscount = null;
-    public $discountError = '';
-    public $discountSuccess = '';
+    public $discountError = null;
+
+    // Set initial table based on URL param
+    public $table_number = null;
 
     public function mount()
     {
-        $this->tables = Table::where('status', 'available')->get();
-
-        if (request()->has('table')) {
-            $table = Table::find(request()->query('table'));
-            if ($table && $table->status === 'available') {
+        $this->table_number = request()->query('table');
+        if ($this->table_number) {
+            $table = Table::where('table_number', $this->table_number)->first();
+            if ($table) {
                 $this->table_id = $table->id;
-                $this->table_number = $table->table_number;
-                $this->orderType = 'dine-in';
-            } else {
-                // Table is occupied or not found, fallback to takeaway
-                $this->orderType = 'takeaway';
-                session()->flash('table_warning', 'Meja yang Anda tuju sedang terisi. Silakan pilih mode Takeaway atau pilih meja lain.');
+                if ($table->status === 'occupied') {
+                    session()->flash('table_warning', 'Meja ini saat ini tercatat sedang terisi. Anda tetap bisa memesan, namun pesanan Anda mungkin akan digabung atau dikonfirmasi ulang oleh staf.');
+                }
             }
-        } else {
-            $this->orderType = 'takeaway';
         }
-
-        $this->categories = Category::where('is_active', true)->get();
-
-        $this->loadMenus();
     }
 
-    public function loadMenus()
+    public function setActiveCategory($categoryId)
     {
-        $query = Menu::where('is_available', true);
-        if ($this->activeCategoryId) {
-            $query->where('category_id', $this->activeCategoryId);
-        }
-        $this->menus = $query->get();
-    }
-
-    public function setActiveCategory($id)
-    {
-        $this->activeCategoryId = $id;
-        $this->loadMenus();
+        $this->activeCategoryId = $categoryId;
     }
 
     public function addToCart($menuId)
     {
         $menu = Menu::find($menuId);
-        if (!$menu) return;
+        if (!$menu || $menu->isOutOfStock()) return;
 
         if (isset($this->cart[$menuId])) {
             $this->cart[$menuId]['quantity']++;
         } else {
             $this->cart[$menuId] = [
-                'menu_id' => $menu->id,
+                'id' => $menu->id,
                 'name' => $menu->name,
                 'price' => $menu->price,
-                'image' => $menu->image,
                 'quantity' => 1,
-                'notes' => '',
+                'image' => $menu->image ? asset('storage/' . $menu->image) : null,
+                'notes' => ''
             ];
         }
+        
+        $this->showCart = true;
     }
 
     public function increaseQuantity($menuId)
@@ -104,6 +98,7 @@ class OrderPage extends Component
                 unset($this->cart[$menuId]);
             }
         }
+        
         if (empty($this->cart)) {
             $this->showCart = false;
         }
@@ -116,167 +111,196 @@ class OrderPage extends Component
         }
     }
 
-    public function toggleCart()
-    {
-        $this->showCart = !$this->showCart;
-    }
-
-    public function getCartTotalProperty()
-    {
-        $total = 0;
-        foreach ($this->cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
-        return $total;
-    }
-
-    public function getTaxAmountProperty()
-    {
-        $setting = \App\Models\StoreSetting::first();
-        $rate = $setting ? (float) $setting->tax_rate : 0;
-        return $this->cartTotal * ($rate / 100);
-    }
-
-    public function getServiceChargeAmountProperty()
-    {
-        $setting = \App\Models\StoreSetting::first();
-        $rate = $setting ? (float) $setting->service_charge_rate : 0;
-        return $this->cartTotal * ($rate / 100);
-    }
-
-    public function getDiscountAmountProperty()
-    {
-        if (!$this->appliedDiscount) return 0;
-        $discount = \App\Models\Discount::find($this->appliedDiscount['id']);
-        if (!$discount) return 0;
-        return $discount->calculateDiscount($this->cartTotal);
-    }
-
-    public function getGrandTotalProperty()
-    {
-        return max(0, $this->cartTotal + $this->taxAmount + $this->serviceChargeAmount - $this->discountAmount);
-    }
-
     public function applyDiscount()
     {
-        $this->discountError = '';
-        $this->discountSuccess = '';
+        $this->discountError = null;
+        if (empty($this->discountCode)) return;
 
-        if (empty(trim($this->discountCode))) {
-            $this->discountError = 'Masukkan kode promo terlebih dahulu.';
-            return;
-        }
-
-        $discount = \App\Models\Discount::where('code', strtoupper(trim($this->discountCode)))->first();
+        $discount = Discount::where('code', strtoupper($this->discountCode))
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('valid_until')->orWhere('valid_until', '>=', now());
+            })->first();
 
         if (!$discount) {
-            $this->discountError = 'Kode promo tidak ditemukan.';
+            $this->discountError = 'Kode diskon tidak valid atau sudah kadaluarsa.';
             return;
         }
 
-        if (!$discount->isUsable()) {
-            $this->discountError = 'Kode promo ini sudah tidak aktif atau sudah habis masa berlakunya.';
-            return;
-        }
-
-        $this->appliedDiscount = ['id' => $discount->id, 'code' => $discount->code, 'type' => $discount->type, 'value' => $discount->value];
-        $this->discountSuccess = 'Kode promo "' . $discount->code . '" berhasil diterapkan!';
-        $this->discountCode = '';
+        $this->appliedDiscount = [
+            'id' => $discount->id,
+            'code' => $discount->code,
+            'type' => $discount->type,
+            'value' => $discount->value,
+        ];
     }
 
     public function removeDiscount()
     {
         $this->appliedDiscount = null;
         $this->discountCode = '';
-        $this->discountError = '';
-        $this->discountSuccess = '';
+    }
+
+    public function getCartTotalProperty()
+    {
+        return collect($this->cart)->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
+    }
+
+    public function getDiscountAmountProperty()
+    {
+        if (!$this->appliedDiscount) return 0;
+        
+        if ($this->appliedDiscount['type'] === 'percentage') {
+            return $this->cartTotal * ($this->appliedDiscount['value'] / 100);
+        }
+        
+        return min($this->appliedDiscount['value'], $this->cartTotal);
+    }
+
+    public function getTaxAmountProperty()
+    {
+        $setting = StoreSetting::first();
+        $rate = $setting ? $setting->tax_rate : 0;
+        $taxableAmount = $this->cartTotal - $this->discountAmount;
+        return max(0, $taxableAmount * ($rate / 100));
+    }
+
+    public function getServiceChargeAmountProperty()
+    {
+        $setting = StoreSetting::first();
+        $rate = $setting ? $setting->service_charge_rate : 0;
+        $taxableAmount = $this->cartTotal - $this->discountAmount;
+        return max(0, $taxableAmount * ($rate / 100));
+    }
+
+    public function getGrandTotalProperty()
+    {
+        return max(0, $this->cartTotal - $this->discountAmount + $this->taxAmount + $this->serviceChargeAmount);
     }
 
     public function checkout()
     {
-        if (empty($this->cart)) return;
-
-        if (empty(trim($this->customer_name))) {
-            $this->addError('customer_name', 'Nama pemesan wajib diisi.');
-            return;
-        }
-
-        if ($this->orderType === 'dine-in' && empty($this->table_id)) {
-            $this->addError('table_id', 'Silakan pilih nomor meja Anda terlebih dahulu.');
-            return;
-        }
-
-        // Validasi stok mencukupi sebelum checkout
-        foreach ($this->cart as $item) {
-            $menu = Menu::find($item['menu_id']);
-            if ($menu && $menu->track_stock && $menu->stock < $item['quantity']) {
-                $this->addError('customer_name',
-                    "Stok \"" . $menu->name . "\" tidak mencukupi (sisa: " . $menu->stock . ").");
-                return;
-            }
-        }
-
-        $order = Order::create([
-            'table_id'      => $this->table_id,
-            'order_number'  => 'ORD-' . strtoupper(Str::random(8)),
-            'customer_name' => trim($this->customer_name),
-            'order_type'    => $this->orderType,
-            'status'        => 'pending',
-            'subtotal_price'=> $this->cartTotal,
-            'tax_amount'    => $this->taxAmount,
-            'service_charge_amount' => $this->serviceChargeAmount,
-            'discount_code'  => $this->appliedDiscount['code'] ?? null,
-            'discount_amount'=> $this->discountAmount,
-            'total_price'   => $this->grandTotal,
-            'payment_status'=> 'unpaid',
+        $this->validate([
+            'customer_name' => 'required|string|max:255',
+            'table_id' => 'required|exists:tables,id'
+        ], [
+            'customer_name.required' => 'Nama wajib diisi.',
+            'table_id.required' => 'Silakan pilih nomor meja Anda.',
         ]);
 
-        // Increment discount usage counter
-        if ($this->appliedDiscount) {
-            \App\Models\Discount::where('id', $this->appliedDiscount['id'])->increment('used_count');
+        if (empty($this->cart)) {
+            $this->addError('cart', 'Keranjang belanja masih kosong.');
+            return;
         }
+
+        if ($this->paymentMethod === 'qris') {
+            // Show QRIS Modal and wait for simulated payment
+            $this->showQrisModal = true;
+            return;
+        }
+
+        // Cash Payment - Process immediately
+        $this->processFinalOrder('cash', 'unpaid');
+    }
+    
+    public function cancelQris()
+    {
+        $this->showQrisModal = false;
+    }
+
+    public function simulateQrisSuccess()
+    {
+        // Customer paid via QRIS
+        $this->processFinalOrder('qris', 'paid');
+        $this->showQrisModal = false;
+    }
+
+    private function processFinalOrder($method, $status)
+    {
+        $table = Table::find($this->table_id);
+        
+        $order = Order::create([
+            'order_number' => 'ORD-' . strtoupper(Str::random(8)),
+            'table_id' => $this->table_id,
+            'customer_name' => $this->customer_name,
+            'order_type' => 'dine-in', // Fixed to dine-in
+            'status' => 'pending',
+            'payment_status' => $status,
+            'payment_method' => $method,
+            'subtotal_price' => $this->cartTotal,
+            'tax_amount' => $this->taxAmount,
+            'service_charge_amount' => $this->serviceChargeAmount,
+            'discount_amount' => $this->discountAmount,
+            'total_price' => $this->grandTotal,
+        ]);
 
         foreach ($this->cart as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
-                'menu_id'  => $item['menu_id'],
+                'menu_id' => $item['id'],
                 'quantity' => $item['quantity'],
-                'price'    => $item['price'],
-                'notes'    => $item['notes'] ?? '',
+                'price' => $item['price'],
+                'notes' => $item['notes'] ?? null,
             ]);
+        }
 
-            // Kurangi stok menu secara otomatis
-            $menu = Menu::find($item['menu_id']);
-            if ($menu) {
-                $menu->deductStock($item['quantity']);
+        if ($table && $table->status !== 'occupied') {
+            $table->update(['status' => 'occupied']);
+        }
+
+        // Fire event only after successful payment (or cash selection)
+        // This triggers KDS real-time update
+        broadcast(new OrderPlaced($order))->toOthers();
+
+        // Update Discount Usage
+        if ($this->appliedDiscount) {
+            $discount = Discount::find($this->appliedDiscount['id']);
+            if ($discount) {
+                $discount->increment('current_uses');
             }
         }
 
-        if ($this->table_id) {
-            Table::where('id', $this->table_id)->update(['status' => 'occupied']);
-        }
+        // Save to session so dashboard can auto-load tracking
+        session(['last_order_number' => $order->order_number]);
 
-        // Broadcast ke Kitchen (dibungkus try-catch agar tidak block redirect jika broadcasting tidak aktif)
-        try {
-            event(new \App\Events\OrderPlaced($order));
-        } catch (\Exception $e) {
-            \Log::warning('OrderPlaced broadcast failed: ' . $e->getMessage());
-        }
-
-        // Reset state
-        $this->cart              = [];
-        $this->showCart          = false;
-        $this->appliedDiscount   = null;
-        $this->discountCode      = '';
-        $this->discountAmount    = 0;
-        $this->discountError     = '';
-        $this->discountSuccess   = '';
-
-        return redirect()->route('customer.track', ['order_number' => $order->order_number]);
+        // Clear cart and show success
+        $this->completedOrder = $order;
+        $this->cart = [];
+        $this->showCart = false;
+        $this->showSuccess = true;
+        $this->appliedDiscount = null;
+        $this->discountCode = '';
+    }
+    
+    public function closeSuccess()
+    {
+        $orderNumber = $this->completedOrder->order_number;
+        $this->showSuccess = false;
+        $this->completedOrder = null;
+        
+        return redirect()->route('customer.track', ['order_number' => $orderNumber]);
     }
 
     public function render()
     {
-        return view('livewire.customer.order-page')->layout('layouts.customer');
+        $categories = Category::all();
+        
+        $menus = Menu::query();
+        if ($this->activeCategoryId) {
+            $menus->where('category_id', $this->activeCategoryId);
+        }
+        if ($this->search) {
+            $menus->where('name', 'like', '%' . $this->search . '%');
+        }
+        
+        $tables = Table::orderBy('table_number')->get();
+
+        return view('livewire.customer.order-page', [
+            'categories' => $categories,
+            'menus' => $menus->get(),
+            'tables' => $tables,
+        ])->layout('layouts.customer');
     }
 }

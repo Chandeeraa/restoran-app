@@ -12,8 +12,16 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                brand: {
+                    orange: '#f5a623',
+                    yellow: '#f8c23a',
+                    green: '#7ed321',
+                    cream: '#fcfaf2'
+                }
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Outfit', 'Figtree', ...defaultTheme.fontFamily.sans],
             },
         },
     },

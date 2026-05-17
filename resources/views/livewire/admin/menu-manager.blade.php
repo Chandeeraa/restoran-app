@@ -37,13 +37,13 @@
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Name</label>
-                        <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Category</label>
-                        <select wire:model="category_id" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm {{ $categories->isEmpty() ? 'bg-gray-100 dark:bg-slate-700 cursor-not-allowed' : '' }}" {{ $categories->isEmpty() ? 'disabled' : '' }}>
+                        <select wire:model="category_id" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm {{ $categories->isEmpty() ? 'bg-gray-100 dark:bg-slate-700 cursor-not-allowed' : '' }}" {{ $categories->isEmpty() ? 'disabled' : '' }}>
                             @if($categories->isEmpty())
                                 <option value="">No categories available - Please create one first</option>
                             @else
@@ -58,19 +58,19 @@
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Price (Rp)</label>
-                        <input type="number" wire:model="price" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <input type="number" wire:model="price" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Description</label>
-                        <textarea wire:model="description" rows="3" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                        <textarea wire:model="description" rows="3" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"></textarea>
                         @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Image</label>
-                        <input type="file" wire:model="image" class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <input type="file" wire:model="image" class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
                         @error('image') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         
                         <div wire:loading wire:target="image" class="text-sm text-gray-500 dark:text-slate-400 mt-2">Uploading...</div>
@@ -88,11 +88,11 @@
 
                     <div class="mb-6 flex items-center space-x-6">
                         <div class="flex items-center">
-                            <input type="checkbox" wire:model.live="track_stock" id="track_stock" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 text-indigo-600 shadow-sm">
+                            <input type="checkbox" wire:model.live="track_stock" id="track_stock" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 text-emerald-600 shadow-sm">
                             <label for="track_stock" class="ml-2 block text-sm text-gray-900 dark:text-slate-100">Kelola Stok</label>
                         </div>
                         <div class="flex items-center">
-                            <input type="checkbox" wire:model="is_available" id="is_available" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 text-indigo-600 shadow-sm">
+                            <input type="checkbox" wire:model="is_available" id="is_available" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 text-emerald-600 shadow-sm">
                             <label for="is_available" class="ml-2 block text-sm text-gray-900 dark:text-slate-100">Available</label>
                         </div>
                         <div class="flex items-center">
@@ -102,26 +102,26 @@
                     </div>
 
                     @if($track_stock)
-                    <div class="mb-4 grid grid-cols-2 gap-3 p-4 bg-indigo-50 dark:bg-slate-700/30 rounded-xl border border-indigo-100 dark:border-slate-700">
+                    <div class="mb-4 grid grid-cols-2 gap-3 p-4 bg-emerald-50 dark:bg-slate-700/30 rounded-xl border border-emerald-100 dark:border-slate-700">
                         <div>
-                            <label class="block text-xs font-semibold text-indigo-700 dark:text-indigo-300 mb-1">Jumlah Stok Saat Ini</label>
-                            <input type="number" wire:model="stock" min="0" class="block w-full rounded-lg border-indigo-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 shadow-sm text-sm">
+                            <label class="block text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-1">Jumlah Stok Saat Ini</label>
+                            <input type="number" wire:model="stock" min="0" class="block w-full rounded-lg border-emerald-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 shadow-sm text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">Alert Jika Stok ≤</label>
                             <input type="number" wire:model="low_stock_threshold" min="1" class="block w-full rounded-lg border-amber-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 shadow-sm text-sm">
                         </div>
-                        <p class="col-span-2 text-xs text-indigo-500 dark:text-indigo-400">* Menu akan otomatis dinonaktifkan saat stok mencapai 0.</p>
+                        <p class="col-span-2 text-xs text-emerald-500 dark:text-emerald-400">* Menu akan otomatis dinonaktifkan saat stok mencapai 0.</p>
                     </div>
                     @endif
 
                     <div class="flex items-center gap-3">
-                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                        <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                             {{ $isEditMode ? 'Update' : 'Save' }}
                         </button>
                         
                         @if($isEditMode)
-                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
+                            <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
                                 Cancel
                             </button>
                         @endif
@@ -182,7 +182,7 @@
                                             {{-- Inline Editor Aktif --}}
                                             <div class="flex items-center gap-1">
                                                 <input type="number" wire:model="quickStockValue" min="0"
-                                                    class="w-16 text-sm rounded-lg border-indigo-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 py-1 px-2 text-center"
+                                                    class="w-16 text-sm rounded-lg border-emerald-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 py-1 px-2 text-center"
                                                     wire:keydown.enter="saveStock({{ $menu->id }})"
                                                     wire:keydown.escape="cancelStockEdit">
                                                 <button wire:click="saveStock({{ $menu->id }})" class="p-1 text-green-600 hover:text-green-800">
@@ -203,7 +203,7 @@
                                                 @else
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">✅ {{ $menu->stock }}</span>
                                                 @endif
-                                                <svg class="w-3 h-3 text-gray-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                <svg class="w-3 h-3 text-gray-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                             </button>
                                         @endif
                                     @else
@@ -222,7 +222,7 @@
                                     </button>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button wire:click="edit({{ $menu->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3 transition-colors">Edit</button>
+                                    <button wire:click="edit({{ $menu->id }})" class="text-emerald-600 hover:text-emerald-900 mr-3 transition-colors">Edit</button>
                                     <button wire:click="delete({{ $menu->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
                                 </td>
                             </tr>

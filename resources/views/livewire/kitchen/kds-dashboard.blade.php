@@ -3,7 +3,7 @@
         
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-slate-200 tracking-tight flex items-center gap-2">
-                <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                 Kitchen Display System
             </h2>
             <div class="flex items-center gap-2">
@@ -30,7 +30,7 @@
                          class="transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
                         
                         <!-- Top status line indicator -->
-                        <div class="h-1 w-full {{ $order->status === 'pending' ? 'bg-orange-400' : 'bg-blue-500' }}"></div>
+                        <div class="h-1 w-full {{ $order->status === 'pending' ? 'bg-orange-400' : 'bg-green-500' }}"></div>
 
                         <div class="p-4 border-b border-gray-50 bg-gray-50 dark:bg-slate-800/50">
                             <div class="flex justify-between items-start mb-2">
@@ -40,11 +40,11 @@
                                         {{ $order->order_type === 'dine-in' ? 'Meja ' . ($order->table->table_number ?? 'N/A') : 'Takeaway' }}
                                     </h3>
                                     @if($order->customer_name)
-                                        <p class="text-xs font-semibold text-indigo-600 mt-0.5">👤 {{ $order->customer_name }}</p>
+                                        <p class="text-xs font-semibold text-emerald-600 mt-0.5">👤 {{ $order->customer_name }}</p>
                                     @endif
                                 </div>
                                 <div class="text-right">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium {{ $order->status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700' }}">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium {{ $order->status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700' }}">
                                         {{ $order->status === 'cooking' ? 'Cooking' : ucfirst($order->status) }}
                                     </span>
                                     <div class="text-xs text-gray-500 dark:text-slate-400 mt-1">
@@ -86,7 +86,7 @@
                         <div class="p-4 border-t border-gray-100 dark:border-slate-700/50 bg-gray-50 dark:bg-slate-800/50">
                             @if($order->status === 'pending')
                                 <button wire:click="updateStatus({{ $order->id }}, 'cooking')" 
-                                        class="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm">
+                                        class="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors shadow-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Start Cooking
                                 </button>
