@@ -101,20 +101,38 @@
                                     <div class="flex justify-end gap-2">
                                         @if($order->status === 'cancelled')
                                             <span class="text-gray-400 italic text-xs py-1.5 px-3 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-100 dark:border-slate-700/50">Dibatalkan</span>
-                                        @elseif($order->payment_status === 'unpaid')
-                                            <button wire:click="cancelOrder({{ $order->id }})" 
-                                                wire:confirm="Apakah Anda yakin ingin membatalkan pesanan {{ $order->order_number }}?"
-                                                class="inline-flex items-center px-3 py-1.5 border border-red-200 text-xs font-semibold rounded-lg text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                                                Batalkan
+                                        @else
+                                            @if($order->status !== 'completed')
+                                                <button wire:click="cancelOrder({{ $order->id }})" 
+                                                    wire:confirm="Apakah Anda yakin ingin membatalkan pesanan {{ $order->order_number }}?"
+                                                    class="inline-flex items-center px-3 py-1.5 border border-red-200 text-xs font-semibold rounded-lg text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                                    Batalkan
+                                                </button>
+                                                
+                                                <button wire:click="completeOrder({{ $order->id }})"
+                                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                                    Selesaikan
+                                                </button>
+                                            @endif
+
+                                            @if($order->payment_status === 'unpaid')
+                                                <button wire:click="openPaymentModal({{ $order->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all">
+                                                    Bayar
+                                                </button>
+                                            @elseif($order->payment_status === 'paid')
+                                                <a href="{{ route('cashier.receipt', $order->id) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm text-xs font-semibold rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
+                                                    <svg class="w-4 h-4 mr-1.5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                    Receipt
+                                                </a>
+                                            @endif
+                                        @endif
+                                        
+                                        @if(auth()->user()->role === 'admin')
+                                            <button wire:click="deleteOrder({{ $order->id }})" 
+                                                wire:confirm="PERINGATAN: Apakah Anda yakin ingin MENGHAPUS PERMANEN pesanan {{ $order->order_number }}? Data ini tidak bisa dikembalikan!"
+                                                class="inline-flex items-center px-2 py-1.5 border border-red-200 dark:border-red-800 text-xs font-semibold rounded-lg text-red-600 dark:text-red-400 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none transition-colors" title="Hapus Permanen">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
-                                            <button wire:click="openPaymentModal({{ $order->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all">
-                                                Process Payment
-                                            </button>
-                                        @elseif($order->payment_status === 'paid')
-                                            <a href="{{ route('cashier.receipt', $order->id) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm text-xs font-semibold rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
-                                                <svg class="w-4 h-4 mr-1.5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                                Receipt
-                                            </a>
                                         @endif
                                     </div>
                                 </td>

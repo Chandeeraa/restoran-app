@@ -47,6 +47,19 @@ class TrackOrder extends Component
         }
     }
 
+    public function completeOrder()
+    {
+        $order = Order::where('order_number', $this->order_number)->first();
+        if ($order && $order->status === 'ready' && $order->payment_status === 'paid') {
+            $order->status = 'completed';
+            $order->save();
+            
+            if ($order->order_type === 'dine-in' && $order->table_id) {
+                \App\Models\Table::where('id', $order->table_id)->update(['status' => 'available']);
+            }
+        }
+    }
+
     public function render()
     {
         $order = Order::with(['items.menu.category', 'table'])

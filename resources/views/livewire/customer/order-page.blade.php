@@ -49,10 +49,22 @@
             @foreach($categories as $category)
                 <button wire:click="setActiveCategory({{ $category->id }})" class="flex flex-col items-center justify-center w-20 h-24 rounded-2xl transition-all {{ $activeCategoryId == $category->id ? 'bg-brand-green text-white shadow-lg shadow-brand-green/30' : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-gray-600 dark:text-slate-400 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-brand-orange dark:hover:text-brand-yellow' }}">
                     <div class="mb-1 text-current">
-                        @if($category->is_drink)
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        @if(strtolower($category->name) === 'dessert')
+                            <i class="fas fa-cheese text-[22px] leading-none mb-0.5"></i>
+                        @elseif(strtolower($category->name) === 'snack')
+                            <i class="fas fa-hamburger text-[22px] leading-none mb-0.5"></i>
+                        @elseif($category->is_drink)
+                            <i class="bi bi-cup-straw text-2xl leading-none"></i>
                         @else
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"></path></svg>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 3v6" />
+                                <path d="M10 3v6" />
+                                <path d="M14 3v6" />
+                                <path d="M6 9c0 2 8 2 8 0" />
+                                <path d="M10 10.5V21" />
+                                <path d="M19 3v9h-3c0-4 2-7 3-9z" />
+                                <path d="M17.5 12V21" />
+                            </svg>
                         @endif
                     </div>
                     <span class="font-bold text-xs text-center px-1 truncate w-full">{{ $category->name }}</span>

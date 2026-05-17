@@ -34,7 +34,13 @@
                 <div class="mb-6 bg-emerald-500/10 border-2 border-emerald-500 rounded-3xl p-5 text-center shadow-lg animate-pulse">
                     <div class="text-4xl mb-2">🔔</div>
                     <h2 class="text-xl font-bold text-emerald-400">Pesanan Anda Siap Diambil!</h2>
-                    <p class="text-emerald-300 text-sm mt-1">Silakan menuju counter untuk mengambil pesanan.</p>
+                    <p class="text-emerald-300 text-sm mt-1 mb-4">Silakan menuju counter untuk mengambil pesanan.</p>
+
+                    @if($order->payment_status === 'paid')
+                        <button wire:click="completeOrder" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-600/30 transition-colors animate-none">
+                            <i class="fas fa-check-circle mr-1"></i> Saya Sudah Ambil Pesanan
+                        </button>
+                    @endif
                 </div>
             @endif
 

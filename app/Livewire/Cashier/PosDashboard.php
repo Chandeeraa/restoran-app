@@ -145,13 +145,18 @@ class PosDashboard extends Component
 
         // Update Order
         $this->selectedOrder->payment_status = 'paid';
-        $this->selectedOrder->status = 'completed';
-        $this->selectedOrder->save();
-
-        // Update Table status if dine-in
-        if ($this->selectedOrder->order_type === 'dine-in' && $this->selectedOrder->table_id) {
-            Table::where('id', $this->selectedOrder->table_id)->update(['status' => 'available']);
+        
+        // Auto-complete if the order is already cooked/ready and payment is processed.
+        if (in_array($this->selectedOrder->status, ['ready', 'served'])) {
+            $this->selectedOrder->status = 'completed';
+            
+            // Release table if dine-in
+            if ($this->selectedOrder->order_type === 'dine-in' && $this->selectedOrder->table_id) {
+                Table::where('id', $this->selectedOrder->table_id)->update(['status' => 'available']);
+            }
         }
+        
+        $this->selectedOrder->save();
         
         // Broadcast that the order is updated
         event(new \App\Events\OrderStatusUpdated($this->selectedOrder));
@@ -180,6 +185,51 @@ class PosDashboard extends Component
             
             $this->loadOrders();
             session()->flash('success', 'Pesanan ' . $order->order_number . ' berhasil dibatalkan.');
+        }
+    }
+
+    public function completeOrder($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order && $order->status !== 'completed' && $order->status !== 'cancelled') {
+            $order->status = 'completed';
+            $order->save();
+
+            // Release table if dine-in
+            if ($order->order_type === 'dine-in' && $order->table_id) {
+                Table::where('id', $order->table_id)->update(['status' => 'available']);
+            }
+
+            event(new \App\Events\OrderStatusUpdated($order));
+            
+            $this->loadOrders();
+            session()->flash('success', 'Pesanan ' . $order->order_number . ' diselesaikan.');
+        }
+    }
+
+    public function deleteOrder($orderId)
+    {
+        if (auth()->user()->role !== 'admin') {
+            return;
+        }
+
+        $order = Order::find($orderId);
+        if ($order) {
+            // Release table if order is still active
+            if ($order->order_type === 'dine-in' && $order->table_id && in_array($order->status, ['pending', 'cooking', 'ready', 'served'])) {
+                Table::where('id', $order->table_id)->update(['status' => 'available']);
+            }
+
+            // Delete relationships to avoid orphan records
+            $order->items()->delete();
+            if ($order->payment) {
+                $order->payment()->delete();
+            }
+            
+            $order->delete();
+            
+            $this->loadOrders();
+            session()->flash('success', 'Riwayat pesanan berhasil dihapus secara permanen.');
         }
     }
 
