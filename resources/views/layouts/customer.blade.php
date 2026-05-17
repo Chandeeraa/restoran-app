@@ -305,7 +305,7 @@
                 <!-- Page Heading -->
                 @if (isset($header))
                     <header class="bg-white/60 dark:bg-slate-800/40 backdrop-blur-md shadow-sm border-b border-white/50 dark:border-slate-700/50 relative z-10">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pr-16 md:pr-8 text-gray-800 dark:text-slate-200">
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-gray-800 dark:text-slate-200">
                             {{ $header }}
                         </div>
                     </header>

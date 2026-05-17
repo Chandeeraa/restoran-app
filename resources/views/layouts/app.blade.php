@@ -218,14 +218,14 @@
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col min-w-0 max-w-full relative z-10 overflow-hidden">
                 <!-- Mobile Navigation Header (Shown only on small screens) -->
-                <div class="md:hidden sticky top-0 z-50 shadow-sm/50 backdrop-blur-xl bg-brand-cream/95 dark:bg-emerald-950/90 border-b border-gray-100/50 dark:border-emerald-900/50 pr-16">
+                <div class="md:hidden sticky top-0 z-50 shadow-sm/50 backdrop-blur-xl bg-brand-cream/95 dark:bg-emerald-950/90 border-b border-gray-100/50 dark:border-emerald-900/50">
                     <livewire:layout.navigation />
                 </div>
 
                 <!-- Page Heading -->
                 @if (isset($header))
                     <header class="bg-white/60 dark:bg-slate-800/40 backdrop-blur-md shadow-sm border-b border-white/50 dark:border-slate-700/50 relative z-10">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pr-16 md:pr-8 text-gray-800 dark:text-slate-200">
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-gray-800 dark:text-slate-200">
                             {{ $header }}
                         </div>
                     </header>

@@ -45,7 +45,7 @@ new class extends Component
     </div>
 
     <!-- Desktop Sidebar & Mobile Dropdown Content -->
-    <div :class="{'block': open, 'hidden': ! open}" class="md:flex md:flex-col md:flex-1 h-full bg-brand-cream dark:bg-emerald-950 md:bg-transparent md:dark:bg-transparent overflow-y-auto relative z-0">
+    <div :class="{'block': open, 'hidden': ! open}" class="md:flex md:flex-col md:flex-1 absolute md:static top-16 left-0 w-full md:w-auto h-auto md:h-full max-h-[calc(100vh-4rem)] md:max-h-none overflow-y-auto md:overflow-y-visible bg-brand-cream dark:bg-emerald-950 md:bg-transparent md:dark:bg-transparent border-b border-gray-200 dark:border-slate-700 md:border-none shadow-xl md:shadow-none z-50 md:z-0">
         
         <!-- Sidebar Decorative Blobs (Bercampur / Bulatan) -->
         <div class="absolute inset-0 z-[-1] overflow-hidden pointer-events-none hidden md:block">
