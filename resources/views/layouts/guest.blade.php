@@ -46,10 +46,10 @@
                 
                 <!-- Logo -->
                 <div class="absolute top-8 left-8 flex items-center gap-2 z-20">
-                    <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
-                        <span class="text-white font-bold text-xl">R</span>
+                    <div class="w-10 h-10 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-mug-hot text-[#5c3a21] text-lg drop-shadow-sm"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-black drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                    <span class="font-serif font-bold text-xl tracking-widest text-[#5c3a21] drop-shadow-sm mt-1">YON RESTO</span>
                 </div>
                 
                 <!-- Background decorative shapes -->
@@ -87,10 +87,10 @@
                 <div class="w-full max-w-md z-10">
                     <!-- Mobile Logo -->
                     <div class="md:hidden flex items-center justify-center mb-8 gap-2">
-                        <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md">
-                            <span class="text-white font-bold text-xl">R</span>
+                        <div class="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-mug-hot text-[#5c3a21] text-xl drop-shadow-sm"></i>
                         </div>
-                        <span class="font-bold text-2xl tracking-tight text-black drop-shadow-sm">RESTO<span class="font-light">SMART</span></span>
+                        <span class="font-serif font-bold text-3xl tracking-widest text-[#5c3a21] drop-shadow-sm mt-1">YON RESTO</span>
                     </div>
 
                     {{ $slot }}

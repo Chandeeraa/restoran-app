@@ -304,12 +304,12 @@ class OrderPage extends Component
 
     public function render()
     {
-        $categories = Category::orderBy('is_drink')->orderBy('name')->get();
+        $categories = Category::orderBy('id')->get();
 
         $menus = Menu::query()
             ->select('menus.*')
             ->join('categories', 'menus.category_id', '=', 'categories.id')
-            ->orderBy('categories.is_drink')
+            ->orderBy('categories.id')
             ->orderBy('menus.name');
 
         if ($this->activeCategoryId) {

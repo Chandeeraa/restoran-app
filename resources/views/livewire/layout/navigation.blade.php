@@ -21,8 +21,9 @@ new class extends Component
     <div class="md:hidden flex justify-between items-center h-16 px-4 sm:px-6">
         <!-- Logo -->
         <div class="shrink-0 flex items-center">
-            <a href="{{ route('dashboard') }}" wire:navigate.hover>
-                <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-slate-200" />
+            <a href="{{ route('dashboard') }}" wire:navigate.hover class="flex items-center gap-2">
+                <i class="fa-solid fa-mug-hot text-[#5c3a21] dark:text-amber-500 text-2xl drop-shadow-sm"></i>
+                <span class="font-serif font-bold text-lg tracking-widest text-[#5c3a21] dark:text-amber-400 mt-1">YON RESTO</span>
             </a>
         </div>
 
