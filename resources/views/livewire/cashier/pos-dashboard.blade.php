@@ -137,7 +137,7 @@
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <!-- Background overlay -->
-            <div class="fixed inset-0 bg-gray-50 dark:bg-slate-800/500 bg-opacity-75 transition-opacity" wire:click="closePaymentModal"></div>
+            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" wire:click="closePaymentModal"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
@@ -200,7 +200,7 @@
                                         <input type="number" wire:model.live.debounce.300ms="amountGiven" class="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-xl py-2.5" placeholder="0">
                                     </div>
                                     @if($paymentError)
-                                        <p class="mt-1.5 text-sm text-red-600">{{ $paymentError }}</p>
+                                        <p class="mt-2 text-sm font-bold text-red-600 bg-red-50 dark:bg-red-900/30 p-2 rounded-lg border border-red-200 dark:border-red-800/50">{{ $paymentError }}</p>
                                     @endif
                                 </div>
 

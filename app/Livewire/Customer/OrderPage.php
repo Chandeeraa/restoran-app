@@ -46,7 +46,9 @@ class OrderPage extends Component
     {
         $this->table_number = request()->query('table');
         if ($this->table_number) {
-            $table = Table::where('table_number', $this->table_number)->first();
+            $table = Table::where('table_number', $this->table_number)
+                          ->orWhere('id', $this->table_number)
+                          ->first();
             if ($table) {
                 $this->table_id = $table->id;
                 if ($table->status === 'occupied') {
@@ -78,8 +80,6 @@ class OrderPage extends Component
                 'notes' => ''
             ];
         }
-        
-        $this->showCart = true;
     }
 
     public function increaseQuantity($menuId)
