@@ -36,7 +36,7 @@ class TrackOrder extends Component
 
     public function cancelOrder()
     {
-        $order = Order::with('items')->where('order_number', $this->order_number)->first();
+        $order = Order::with('items.menu')->where('order_number', $this->order_number)->first();
 
         if (! $order || $order->status !== 'pending') {
             return;
@@ -45,9 +45,20 @@ class TrackOrder extends Component
         $order->status = 'cancelled';
         $order->save();
 
+        // Restore stock
+        foreach ($order->items as $item) {
+            $menu = $item->menu;
+            if ($menu) {
+                $menu->restoreStock($item->quantity);
+            }
+        }
+
         if ($order->order_type === 'dine-in' && $order->table_id) {
             Table::where('id', $order->table_id)->update(['status' => 'available']);
         }
+
+        // Broadcast status update
+        event(new \App\Events\OrderStatusUpdated($order));
     }
 
     public function completeOrder()

@@ -11,28 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=outfit:400,500,600,700,800&display=swap" rel="stylesheet" />
 
-        <!-- Tailwind Play CDN (Shortcut / Workaround for secured PC environment) -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            brand: {
-                                orange: '#f5a623',
-                                yellow: '#f8c23a',
-                                green: '#7ed321',
-                                cream: '#fcfaf2'
-                            }
-                        },
-                        fontFamily: {
-                            sans: ['Outfit', 'sans-serif'],
-                        }
-                    }
-                }
-            }
-        </script>
+        <!-- Restore Vite -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         <style>
             body { font-family: 'Outfit', sans-serif; }

@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-slate-200 leading-tight">
-            {{ __('Staff & Users Management') }}
+            {{ __('Manajemen Staff & Pengguna') }}
         </h2>
     </x-slot>
 
@@ -9,7 +9,7 @@
         <!-- Form Section -->
         <div class="w-full md:w-1/3">
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-100 mb-1">{{ $isEditMode ? 'Edit User' : 'Tambah Staff Baru' }}</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-100 mb-1">{{ $isEditMode ? 'Edit Staff' : 'Tambah Staff Baru' }}</h3>
                 <p class="text-xs text-gray-400 dark:text-slate-500 mb-4">Role <strong>Admin</strong> hanya 1 dan tidak dapat ditambahkan di sini.</p>
                 
                 @if (session()->has('message'))
@@ -25,13 +25,13 @@
 
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Name</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Nama</label>
                         <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Email Address</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Alamat Email</label>
                         <input type="email" wire:model="email" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
@@ -39,19 +39,19 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Role</label>
                         <select wire:model="role" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
-                            <option value="cashier">Cashier</option>
-                            <option value="kitchen">Kitchen Staff</option>
-                            <option value="waiter">Waiter / Server</option>
-                            <option value="customer">Customer</option>
+                            <option value="cashier">Kasir</option>
+                            <option value="kitchen">Staf Dapur (Kitchen)</option>
+                            <option value="waiter">Pelayan (Waiter)</option>
+                            <option value="customer">Pelanggan (Customer)</option>
                         </select>
                         @error('role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
-                            Password 
+                            Kata Sandi
                             @if($isEditMode)
-                                <span class="text-xs text-gray-400 font-normal">(Leave blank to keep current)</span>
+                                <span class="text-xs text-gray-400 font-normal">(Biarkan kosong untuk mempertahankan sandi lama)</span>
                             @endif
                         </label>
                         <input type="password" wire:model="password" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
@@ -60,12 +60,12 @@
 
                     <div class="flex items-center gap-3">
                         <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                            {{ $isEditMode ? 'Update User' : 'Create User' }}
+                            {{ $isEditMode ? 'Simpan Perubahan' : 'Tambah Staff' }}
                         </button>
                         
                         @if($isEditMode)
                             <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                                Cancel
+                                Batal
                             </button>
                         @endif
                     </div>
@@ -79,9 +79,9 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-800/50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Role</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Pengguna</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Peran (Role)</th>
+                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
@@ -143,16 +143,16 @@
                                         </span>
                                     @elseif(auth()->id() !== $user->id)
                                         <button wire:click="edit({{ $user->id }})" class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 mr-3 transition-colors">Edit</button>
-                                        <button wire:click="delete({{ $user->id }})" wire:confirm="Hapus user {{ $user->name }}? Tindakan ini tidak dapat dibatalkan." class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors">Delete</button>
+                                        <button wire:click="delete({{ $user->id }})" wire:confirm="Hapus user {{ $user->name }}? Tindakan ini tidak dapat dibatalkan." class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors">Hapus</button>
                                     @else
-                                        <span class="text-xs text-gray-400 italic">You</span>
+                                        <span class="text-xs text-gray-400 italic">Anda</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-slate-400">
-                                    No users found.
+                                    Pengguna tidak ditemukan.
                                 </td>
                             </tr>
                         @endforelse

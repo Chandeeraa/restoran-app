@@ -17,6 +17,8 @@ class DiscountManager extends Component
 
     public $max_uses = '';
 
+    public $valid_until = '';
+
     public $is_active = true;
 
     public $discountId = null;
@@ -36,6 +38,7 @@ class DiscountManager extends Component
             'type' => 'required|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
             'max_uses' => 'nullable|integer|min:1',
+            'valid_until' => 'nullable|date|after_or_equal:today',
             'is_active' => 'boolean',
         ]);
 
@@ -45,6 +48,7 @@ class DiscountManager extends Component
             'type' => $this->type,
             'value' => $this->value,
             'max_uses' => $this->max_uses ?: null,
+            'valid_until' => $this->valid_until ?: null,
             'is_active' => $this->is_active,
         ]);
 
@@ -61,6 +65,7 @@ class DiscountManager extends Component
         $this->type = $discount->type;
         $this->value = $discount->value;
         $this->max_uses = $discount->max_uses;
+        $this->valid_until = $discount->valid_until ? $discount->valid_until->format('Y-m-d') : '';
         $this->is_active = $discount->is_active;
         $this->isEditMode = true;
     }
@@ -73,6 +78,7 @@ class DiscountManager extends Component
             'type' => 'required|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
             'max_uses' => 'nullable|integer|min:1',
+            'valid_until' => 'nullable|date|after_or_equal:today',
             'is_active' => 'boolean',
         ]);
 
@@ -83,6 +89,7 @@ class DiscountManager extends Component
             'type' => $this->type,
             'value' => $this->value,
             'max_uses' => $this->max_uses ?: null,
+            'valid_until' => $this->valid_until ?: null,
             'is_active' => $this->is_active,
         ]);
 
@@ -109,6 +116,7 @@ class DiscountManager extends Component
         $this->type = 'percentage';
         $this->value = '';
         $this->max_uses = '';
+        $this->valid_until = '';
         $this->is_active = true;
         $this->discountId = null;
         $this->isEditMode = false;

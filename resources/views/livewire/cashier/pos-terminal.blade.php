@@ -386,6 +386,18 @@
                         <span class="text-gray-500 dark:text-slate-400 font-medium">Subtotal</span>
                         <span class="text-gray-800 dark:text-slate-200 font-bold">Rp {{ number_format($this->subtotal, 0, ',', '.') }}</span>
                     </div>
+                    @if($this->discountAmount > 0)
+                    <div class="flex justify-between text-sm text-green-600 dark:text-green-400 font-medium">
+                        <span>Discount ({{ $appliedDiscount['code'] }})</span>
+                        <span>- Rp {{ number_format($this->discountAmount, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
+                    @if($this->serviceChargeAmount > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500 dark:text-slate-400 font-medium">Service Charge</span>
+                        <span class="text-gray-800 dark:text-slate-200 font-bold">Rp {{ number_format($this->serviceChargeAmount, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
                     @if($this->taxAmount > 0)
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500 dark:text-slate-400 font-medium">Tax</span>
@@ -396,6 +408,32 @@
                         <span class="text-gray-800 dark:text-slate-200 font-bold">Total</span>
                         <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">Rp {{ number_format($this->total, 0, ',', '.') }}</span>
                     </div>
+                </div>
+
+                <!-- Discount Code Input -->
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase mb-2">Discount Code</label>
+                    <div class="flex gap-2">
+                        <input type="text" wire:model.live.debounce.300ms="discountCode" placeholder="PROMO123" class="flex-1 px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-bold text-gray-800 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none uppercase" @if($appliedDiscount) disabled @endif>
+                        @if($appliedDiscount)
+                            <button type="button" wire:click="removeDiscount" class="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-sm font-bold border border-red-200 hover:bg-red-100 transition-colors">
+                                Reset
+                            </button>
+                        @else
+                            <button type="button" wire:click="applyDiscount" class="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-bold border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                                Apply
+                            </button>
+                        @endif
+                    </div>
+                    @if($discountError)
+                        <p class="text-xs text-red-500 font-medium mt-1.5">{{ $discountError }}</p>
+                    @endif
+                    @if($appliedDiscount)
+                        <p class="text-xs text-green-600 dark:text-green-400 font-medium mt-1.5 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Diskon berhasil diterapkan!
+                        </p>
+                    @endif
                 </div>
 
                 <div class="mb-4">

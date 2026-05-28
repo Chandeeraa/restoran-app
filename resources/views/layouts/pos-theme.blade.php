@@ -15,28 +15,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        <!-- Tailwind Play CDN (Shortcut / Workaround for secured PC environment) -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            brand: {
-                                orange: '#f5a623',
-                                yellow: '#f8c23a',
-                                green: '#7ed321',
-                                cream: '#fcfaf2'
-                            }
-                        },
-                        fontFamily: {
-                            sans: ['Outfit', 'sans-serif'],
-                        }
-                    }
-                }
-            }
-        </script>
+
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

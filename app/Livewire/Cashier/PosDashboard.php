@@ -189,11 +189,19 @@ class PosDashboard extends Component
 
     public function cancelOrder($orderId)
     {
-        $order = Order::find($orderId);
+        $order = Order::with('items.menu')->find($orderId);
 
         if ($order && $order->payment_status !== 'paid' && $order->status !== 'cancelled') {
             $order->status = 'cancelled';
             $order->save();
+
+            // Restore stock
+            foreach ($order->items as $item) {
+                $menu = $item->menu;
+                if ($menu) {
+                    $menu->restoreStock($item->quantity);
+                }
+            }
 
             // Release table if dine-in
             if ($order->order_type === 'dine-in' && $order->table_id) {

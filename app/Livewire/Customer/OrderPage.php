@@ -25,6 +25,8 @@ class OrderPage extends Component
 
     public $customer_name = '';
 
+    public $orderType = 'dine-in'; // 'dine-in' or 'takeaway'
+
     // Payment Options
     public $paymentMethod = 'cash'; // 'cash' or 'qris'
 
@@ -79,6 +81,9 @@ class OrderPage extends Component
         }
 
         if (isset($this->cart[$menuId])) {
+            if ($menu->track_stock && ($this->cart[$menuId]['quantity'] >= $menu->stock)) {
+                return;
+            }
             $this->cart[$menuId]['quantity']++;
         } else {
             $this->cart[$menuId] = [
@@ -95,6 +100,10 @@ class OrderPage extends Component
     public function increaseQuantity($menuId)
     {
         if (isset($this->cart[$menuId])) {
+            $menu = Menu::find($menuId);
+            if ($menu && $menu->track_stock && ($this->cart[$menuId]['quantity'] >= $menu->stock)) {
+                return;
+            }
             $this->cart[$menuId]['quantity']++;
         }
     }
@@ -130,12 +139,10 @@ class OrderPage extends Component
 
         $discount = Discount::where('code', strtoupper($this->discountCode))
             ->where('is_active', true)
-            ->where(function ($query) {
-                $query->whereNull('valid_until')->orWhere('valid_until', '>=', now());
-            })->first();
+            ->first();
 
-        if (! $discount) {
-            $this->discountError = 'Kode diskon tidak valid atau sudah kadaluarsa.';
+        if (! $discount || ! $discount->isUsable()) {
+            $this->discountError = 'Kode diskon tidak valid, sudah kadaluarsa, atau sudah habis kuota.';
 
             return;
         }
@@ -174,9 +181,19 @@ class OrderPage extends Component
         return min($this->appliedDiscount['value'], $this->cartTotal);
     }
 
+    private $storeSetting = null;
+
+    private function getStoreSetting()
+    {
+        if ($this->storeSetting === null) {
+            $this->storeSetting = StoreSetting::first() ?? new StoreSetting();
+        }
+        return $this->storeSetting;
+    }
+
     public function getTaxAmountProperty()
     {
-        $setting = StoreSetting::first();
+        $setting = $this->getStoreSetting();
         $rate = $setting ? $setting->tax_rate : 0;
         $taxableAmount = $this->cartTotal - $this->discountAmount;
 
@@ -185,7 +202,7 @@ class OrderPage extends Component
 
     public function getServiceChargeAmountProperty()
     {
-        $setting = StoreSetting::first();
+        $setting = $this->getStoreSetting();
         $rate = $setting ? $setting->service_charge_rate : 0;
         $taxableAmount = $this->cartTotal - $this->discountAmount;
 
@@ -199,10 +216,16 @@ class OrderPage extends Component
 
     public function checkout()
     {
-        $this->validate([
+        $rules = [
             'customer_name' => 'required|string|max:255',
-            'table_id' => 'required|exists:tables,id',
-        ], [
+            'orderType' => 'required|in:dine-in,takeaway',
+        ];
+
+        if ($this->orderType === 'dine-in') {
+            $rules['table_id'] = 'required|exists:tables,id';
+        }
+
+        $this->validate($rules, [
             'customer_name.required' => 'Nama wajib diisi.',
             'table_id.required' => 'Silakan pilih nomor meja Anda.',
         ]);
@@ -238,17 +261,31 @@ class OrderPage extends Component
 
     private function processFinalOrder($method, $status)
     {
-        $table = Table::find($this->table_id);
+        $table = $this->orderType === 'dine-in' ? Table::find($this->table_id) : null;
 
         $queueType = $method === 'cash' ? 1 : 2;
         $queueNumber = Order::whereDate('created_at', today())->max('queue_number');
         $queueNumber = ($queueNumber ?? 0) + 1;
 
+        // Better sequential order number
+        $todayStr = now()->format('Ymd');
+        $lastOrderToday = Order::whereDate('created_at', today())
+            ->orderBy('id', 'desc')
+            ->first();
+        $nextSeq = 1;
+        if ($lastOrderToday) {
+            $parts = explode('-', $lastOrderToday->order_number);
+            if (count($parts) === 3) {
+                $nextSeq = intval($parts[2]) + 1;
+            }
+        }
+        $orderNumber = 'ORD-' . $todayStr . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+
         $order = Order::create([
-            'order_number' => 'ORD-'.strtoupper(Str::random(8)),
-            'table_id' => $this->table_id,
+            'order_number' => $orderNumber,
+            'table_id' => $this->orderType === 'dine-in' ? $this->table_id : null,
             'customer_name' => $this->customer_name,
-            'order_type' => 'dine-in', // Fixed to dine-in
+            'order_type' => $this->orderType,
             'status' => 'pending',
             'payment_status' => $status,
             'payment_method' => $method,
@@ -258,6 +295,7 @@ class OrderPage extends Component
             'tax_amount' => $this->taxAmount,
             'service_charge_amount' => $this->serviceChargeAmount,
             'discount_amount' => $this->discountAmount,
+            'discount_code' => $this->appliedDiscount['code'] ?? null,
             'total_price' => $this->grandTotal,
         ]);
 
@@ -269,9 +307,15 @@ class OrderPage extends Component
                 'price' => $item['price'],
                 'notes' => $item['notes'] ?? null,
             ]);
+
+            // Kurangi stok menu jika tracking stok aktif
+            $menu = Menu::find($item['id']);
+            if ($menu) {
+                $menu->deductStock($item['quantity']);
+            }
         }
 
-        if ($table && $table->status !== 'occupied') {
+        if ($this->orderType === 'dine-in' && $table && $table->status !== 'occupied') {
             $table->update(['status' => 'occupied']);
         }
 
@@ -283,7 +327,7 @@ class OrderPage extends Component
         if ($this->appliedDiscount) {
             $discount = Discount::find($this->appliedDiscount['id']);
             if ($discount) {
-                $discount->increment('current_uses');
+                $discount->increment('used_count');
             }
         }
 
@@ -310,7 +354,7 @@ class OrderPage extends Component
 
     public function render()
     {
-        $categories = Category::orderBy('id')->get();
+        $categories = Category::withCount('menus')->orderBy('id')->get();
 
         $menus = Menu::query()
             ->select('menus.*')

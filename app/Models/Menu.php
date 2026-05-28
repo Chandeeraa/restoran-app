@@ -52,4 +52,23 @@ class Menu extends Model
 
         $this->save();
     }
+
+    /**
+     * Kembalikan stok sejumlah $qty.
+     * Jika menu sebelumnya tidak tersedia karena habis, aktifkan kembali.
+     */
+    public function restoreStock(int $qty): void
+    {
+        if (! $this->track_stock) {
+            return;
+        }
+
+        $this->stock += $qty;
+
+        if ($this->stock > 0) {
+            $this->is_available = true;
+        }
+
+        $this->save();
+    }
 }

@@ -8,29 +8,43 @@
                     <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     Dashboard Statistik
                 </h2>
-                <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">Ringkasan harian — {{ now()->translatedFormat('l, d F Y') }} • Auto-refresh setiap 60 detik</p>
+                <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">Ringkasan {{ $period === 'today' ? 'hari ini' : ($period === 'week' ? 'minggu ini' : 'bulan ini') }} — {{ now()->translatedFormat('l, d F Y') }} • Auto-refresh setiap 60 detik</p>
             </div>
             <div class="flex gap-3">
                 <!-- Dropdown Filter Waktu -->
                 <div x-data="{ open: false }" class="relative z-[50]">
                     <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-200 dark:border-slate-700">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                        Filter Waktu
+                        Filter: {{ $period === 'today' ? 'Hari Ini' : ($period === 'week' ? 'Minggu Ini' : 'Bulan Ini') }}
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <a href="#" @click.prevent="open = false" class="flex items-center justify-between px-4 py-3 text-sm text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30">
+                        <a href="#" wire:click.prevent="setPeriod('today')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'today' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                             Hari Ini
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            @if($period === 'today')
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            @endif
                         </a>
-                        <a href="#" @click.prevent="open = false" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                        <a href="#" wire:click.prevent="setPeriod('week')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'week' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                             Minggu Ini
+                            @if($period === 'week')
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            @endif
                         </a>
-                        <a href="#" @click.prevent="open = false" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                        <a href="#" wire:click.prevent="setPeriod('month')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'month' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                             Bulan Ini
+                            @if($period === 'month')
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            @endif
                         </a>
                     </div>
                 </div>
+
+                <!-- CSV Export Button -->
+                <button wire:click="exportToCsv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-200 dark:border-slate-700">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Ekspor CSV
+                </button>
 
                 <div x-data="{ open: false }" class="relative z-[50]">
                     <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
@@ -39,11 +53,8 @@
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <a href="{{ route('admin.report.print', ['period' => 'today']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
-                            📅 Laporan Hari Ini
-                        </a>
-                        <a href="{{ route('admin.report.print', ['period' => 'month']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
-                            📆 Laporan Bulan Ini
+                        <a href="{{ route('admin.report.print', ['period' => $period]) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
+                            📅 Laporan Periode Ini
                         </a>
                         <a href="{{ route('admin.report.print', ['period' => 'all']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
                             📊 Semua Transaksi
@@ -92,18 +103,18 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
 
             <!-- Top Menu -->
             <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
                 <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
                     <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                    Menu Terlaris Hari Ini
+                    Menu Terlaris Periode Ini
                 </h3>
                 @if($topMenus->isEmpty())
                     <div class="text-center py-8 text-gray-400">
                         <svg class="w-10 h-10 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                        <p class="text-sm">Belum ada data hari ini</p>
+                        <p class="text-sm">Belum ada data periode ini</p>
                     </div>
                 @else
                     @php $maxQty = $topMenus->first()->total_qty; @endphp
@@ -175,6 +186,35 @@
                         <span class="font-bold text-gray-900 dark:text-slate-100">{{ $tableStats['total'] }}</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Revenue by Category -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
+                <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                    Pendapatan Kategori
+                </h3>
+                @if($revenueByCategory->isEmpty())
+                    <div class="text-center py-8 text-gray-400">
+                        <p class="text-sm">Belum ada data pendapatan</p>
+                    </div>
+                @else
+                    @php $maxRev = $revenueByCategory->max('total_revenue') ?: 1; @endphp
+                    <div class="space-y-4">
+                        @foreach($revenueByCategory as $catRev)
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ $catRev->category_name }}</span>
+                                    <span class="text-xs font-bold text-gray-900 dark:text-slate-100">Rp {{ number_format($catRev->total_revenue, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600"
+                                         style="width: {{ ($catRev->total_revenue / $maxRev) * 100 }}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
 

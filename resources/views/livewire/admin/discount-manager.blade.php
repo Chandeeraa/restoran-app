@@ -50,6 +50,12 @@
                             <input type="number" wire:model="max_uses" placeholder="100" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
 
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Berlaku Hingga (kosongkan = selamanya)</label>
+                            <input type="date" wire:model="valid_until" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
+                            @error('valid_until') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="flex items-center">
                             <input type="checkbox" wire:model="is_active" class="rounded border-gray-300 text-emerald-600">
                             <label class="ml-2 text-sm text-gray-700 dark:text-slate-300">Aktif</label>
@@ -105,6 +111,12 @@
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-slate-400">
                                 {{ $discount->used_count }} / {{ $discount->max_uses ?? '∞' }}
+                                @if($discount->valid_until)
+                                    <div class="text-xs mt-0.5 {{ $discount->valid_until->isPast() ? 'text-red-500 font-semibold' : 'text-gray-400' }}">
+                                        s/d {{ $discount->valid_until->format('d/m/Y') }}
+                                        @if($discount->valid_until->isPast()) (Expired) @endif
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <button wire:click="toggleActive({{ $discount->id }})"

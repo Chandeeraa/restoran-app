@@ -14,6 +14,12 @@ class Discount extends Model
         'max_uses',
         'used_count',
         'is_active',
+        'valid_until',
+    ];
+
+    protected $casts = [
+        'valid_until' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -35,6 +41,9 @@ class Discount extends Model
     public function isUsable(): bool
     {
         if (! $this->is_active) {
+            return false;
+        }
+        if ($this->valid_until !== null && $this->valid_until->isPast()) {
             return false;
         }
         if ($this->max_uses !== null && $this->used_count >= $this->max_uses) {

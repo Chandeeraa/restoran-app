@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-slate-200 leading-tight">
-            {{ __('Menu Management') }}
+            {{ __('Manajemen Menu') }}
         </h2>
     </x-slot>
 
@@ -36,18 +36,18 @@
 
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Name</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Nama Menu</label>
                         <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Category</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Kategori</label>
                         <select wire:model="category_id" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm {{ $categories->isEmpty() ? 'bg-gray-100 dark:bg-slate-700 cursor-not-allowed' : '' }}" {{ $categories->isEmpty() ? 'disabled' : '' }}>
                             @if($categories->isEmpty())
-                                <option value="">No categories available - Please create one first</option>
+                                <option value="">Kategori tidak tersedia - Silakan buat kategori dulu</option>
                             @else
-                                <option value="">Select Category</option>
+                                <option value="">Pilih Kategori</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -57,23 +57,23 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Price (Rp)</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Harga (Rp)</label>
                         <input type="number" wire:model="price" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         @error('price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Description</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Deskripsi</label>
                         <textarea wire:model="description" rows="3" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"></textarea>
                         @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Image</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Foto Menu</label>
                         <input type="file" wire:model="image" class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
                         @error('image') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         
-                        <div wire:loading wire:target="image" class="text-sm text-gray-500 dark:text-slate-400 mt-2">Uploading...</div>
+                        <div wire:loading wire:target="image" class="text-sm text-gray-500 dark:text-slate-400 mt-2">Mengunggah...</div>
                         
                         @if ($image)
                             <div class="mt-2">
@@ -93,7 +93,7 @@
                         </div>
                         <div class="flex items-center">
                             <input type="checkbox" wire:model="is_available" id="is_available" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 text-emerald-600 shadow-sm">
-                            <label for="is_available" class="ml-2 block text-sm text-gray-900 dark:text-slate-100">Available</label>
+                            <label for="is_available" class="ml-2 block text-sm text-gray-900 dark:text-slate-100">Tersedia</label>
                         </div>
                         <div class="flex items-center">
                             <input type="checkbox" wire:model="is_best_seller" id="is_best_seller" class="rounded border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 text-orange-500 shadow-sm">
@@ -117,12 +117,12 @@
 
                     <div class="flex items-center gap-3">
                         <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                            {{ $isEditMode ? 'Update' : 'Save' }}
+                            {{ $isEditMode ? 'Simpan Perubahan' : 'Simpan' }}
                         </button>
                         
                         @if($isEditMode)
                             <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                                Cancel
+                                Batal
                             </button>
                         @endif
                     </div>
@@ -137,10 +137,10 @@
                     <thead class="bg-gray-50 dark:bg-slate-800/50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Menu</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Harga</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Stok</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
@@ -223,13 +223,13 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button wire:click="edit({{ $menu->id }})" class="text-emerald-600 hover:text-emerald-900 mr-3 transition-colors">Edit</button>
-                                    <button wire:click="delete({{ $menu->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
+                                    <button wire:click="delete({{ $menu->id }})" wire:confirm="Apakah Anda yakin?" class="text-red-600 hover:text-red-900 transition-colors">Hapus</button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-slate-400">
-                                    No menus found. Create a new one!
+                                    Menu tidak ditemukan. Silakan tambahkan menu baru!
                                 </td>
                             </tr>
                         @endforelse

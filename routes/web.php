@@ -23,6 +23,7 @@ Route::get('/', Dashboard::class)->name('home');
 
 Route::get('/order', OrderPage::class)->name('order');
 Route::get('/track/{order_number}', TrackOrder::class)->name('customer.track');
+Route::get('/queue', \App\Livewire\QueueDisplay::class)->name('queue.display');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

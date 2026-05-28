@@ -111,6 +111,9 @@ class MenuManager extends Component
 
         $imagePath = $menu->image;
         if ($this->image) {
+            if ($menu->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($menu->image);
+            }
             $imagePath = $this->image->store('menus', 'public');
         }
 
@@ -133,7 +136,11 @@ class MenuManager extends Component
 
     public function delete($id)
     {
-        Menu::findOrFail($id)->delete();
+        $menu = Menu::findOrFail($id);
+        if ($menu->image) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($menu->image);
+        }
+        $menu->delete();
         session()->flash('message', 'Menu deleted successfully.');
     }
 

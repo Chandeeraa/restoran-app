@@ -68,7 +68,7 @@
                         @endif
                     </div>
                     <span class="font-bold text-xs text-center px-1 truncate w-full">{{ $category->name }}</span>
-                    <span class="text-[9px] opacity-75 mt-0.5">{{ $category->menus()->count() }} item</span>
+                    <span class="text-[9px] opacity-75 mt-0.5">{{ $category->menus_count }} item</span>
                 </button>
             @endforeach
         </div>
@@ -193,13 +193,29 @@
         @if(count($cart) > 0)
         <div class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 rounded-t-3xl shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
             <div class="px-5 pt-4 pb-2 space-y-3">
+                <!-- Order Type Switcher -->
+                <div class="mb-3">
+                    <label class="block text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase mb-1.5">Tipe Pesanan</label>
+                    <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-slate-900 p-1 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <button type="button" wire:click="$set('orderType', 'dine-in')" class="py-1.5 rounded-lg text-[11px] font-bold transition-colors flex items-center justify-center gap-1 {{ $orderType === 'dine-in' ? 'bg-brand-green text-white shadow-sm' : 'text-gray-600 dark:text-slate-400' }}">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Dine-In
+                        </button>
+                        <button type="button" wire:click="$set('orderType', 'takeaway')" class="py-1.5 rounded-lg text-[11px] font-bold transition-colors flex items-center justify-center gap-1 {{ $orderType === 'takeaway' ? 'bg-brand-green text-white shadow-sm' : 'text-gray-600 dark:text-slate-400' }}">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            Takeaway
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Customer Info -->
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid {{ $orderType === 'dine-in' ? 'grid-cols-2' : 'grid-cols-1' }} gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase mb-1">Nama Pemesan</label>
                         <input type="text" wire:model="customer_name" placeholder="Nama..." class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-brand-green focus:border-brand-green outline-none transition-colors">
                         @error('customer_name') <span class="text-[10px] text-red-500 dark:text-red-400">{{ $message }}</span> @enderror
                     </div>
+                    @if($orderType === 'dine-in')
                     <div>
                         <label class="block text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase mb-1">Pilih Meja</label>
                         <select wire:model="table_id" class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-brand-green focus:border-brand-green outline-none cursor-pointer transition-colors">
@@ -210,6 +226,7 @@
                         </select>
                         @error('table_id') <span class="text-[10px] text-red-500 dark:text-red-400">{{ $message }}</span> @enderror
                     </div>
+                    @endif
                 </div>
 
                 <!-- Payment Method -->
@@ -245,7 +262,8 @@
                     </div>
                 </div>
                 
-                <button wire:click="checkout" class="w-full py-3.5 bg-brand-green hover:bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-brand-green/30 transition-colors">
+                <button wire:click="checkout" wire:loading.attr="disabled" class="w-full py-3.5 bg-brand-green hover:bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-brand-green/30 transition-colors flex items-center justify-center gap-2">
+                    <span wire:loading wire:target="checkout" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                     @if($paymentMethod === 'qris')
                         Bayar via QRIS
                     @else

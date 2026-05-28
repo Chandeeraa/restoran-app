@@ -14,6 +14,13 @@ new class extends Component
 
         $this->redirect('/', navigate: true);
     }
+
+    public function with(): array
+    {
+        return [
+            'pendingReservationsCount' => \App\Models\Reservation::where('status', 'pending')->count(),
+        ];
+    }
 }; ?>
 
 <nav x-data="{ open: false }" class="bg-brand-cream dark:bg-emerald-950 md:bg-transparent md:dark:bg-transparent h-full flex flex-col border-b md:border-b-0 border-gray-100 dark:border-slate-700/50/50 dark:border-slate-700/50">
@@ -158,7 +165,12 @@ new class extends Component
                     </x-nav-link>
                     <x-nav-link :href="route('admin.reservations')" :active="request()->routeIs('admin.reservations')" class="flex w-full px-3 py-2 rounded-lg mb-1 {{ request()->routeIs('admin.reservations') ? 'bg-brand-yellow/20 dark:bg-brand-yellow/20 text-yellow-700 dark:text-brand-yellow' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700/50' }}" wire:navigate.hover>
                         <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.reservations') ? 'text-brand-orange' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        Reservations
+                        <span class="flex-1 flex justify-between items-center">
+                            <span>Reservasi</span>
+                            @if($pendingReservationsCount > 0)
+                                <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">{{ $pendingReservationsCount }}</span>
+                            @endif
+                        </span>
                     </x-nav-link>
                 @endif
             @endif

@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\StoreSetting;
 use App\Models\Table;
+use App\Models\Discount;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -44,6 +45,13 @@ class PosTerminal extends Component
     public $showSuccess = false;
 
     public $completedOrder = null;
+
+    // Discount Properties
+    public $discountCode = '';
+
+    public $appliedDiscount = null;
+
+    public $discountError = null;
 
     public function mount()
     {
@@ -157,17 +165,81 @@ class PosTerminal extends Component
         return $total;
     }
 
+    private $storeSetting = null;
+
+    private function getStoreSetting()
+    {
+        if ($this->storeSetting === null) {
+            $this->storeSetting = StoreSetting::first() ?? new StoreSetting();
+        }
+        return $this->storeSetting;
+    }
+
+    public function getDiscountAmountProperty()
+    {
+        if (! $this->appliedDiscount) {
+            return 0;
+        }
+
+        if ($this->appliedDiscount['type'] === 'percentage') {
+            return $this->subtotal * ($this->appliedDiscount['value'] / 100);
+        }
+
+        return min($this->appliedDiscount['value'], $this->subtotal);
+    }
+
     public function getTaxAmountProperty()
     {
-        $settings = StoreSetting::first();
+        $settings = $this->getStoreSetting();
         $rate = $settings ? $settings->tax_rate : 0;
+        $taxableAmount = max(0, $this->subtotal - $this->discountAmount);
 
-        return $this->subtotal * ($rate / 100);
+        return $taxableAmount * ($rate / 100);
+    }
+
+    public function getServiceChargeAmountProperty()
+    {
+        $settings = $this->getStoreSetting();
+        $rate = $settings ? $settings->service_charge_rate : 0;
+        $taxableAmount = max(0, $this->subtotal - $this->discountAmount);
+
+        return $taxableAmount * ($rate / 100);
     }
 
     public function getTotalProperty()
     {
-        return $this->subtotal + $this->taxAmount;
+        return max(0, $this->subtotal - $this->discountAmount + $this->taxAmount + $this->serviceChargeAmount);
+    }
+
+    public function applyDiscount()
+    {
+        $this->discountError = null;
+        if (empty($this->discountCode)) {
+            return;
+        }
+
+        $discount = Discount::where('code', strtoupper($this->discountCode))
+            ->where('is_active', true)
+            ->first();
+
+        if (! $discount || ! $discount->isUsable()) {
+            $this->discountError = 'Kode diskon tidak valid, sudah kadaluarsa, atau sudah habis kuota.';
+            return;
+        }
+
+        $this->appliedDiscount = [
+            'id' => $discount->id,
+            'code' => $discount->code,
+            'type' => $discount->type,
+            'value' => $discount->value,
+        ];
+    }
+
+    public function removeDiscount()
+    {
+        $this->appliedDiscount = null;
+        $this->discountCode = '';
+        $this->discountError = null;
     }
 
     public function openCheckout()
@@ -213,8 +285,22 @@ class PosTerminal extends Component
         $queueType = $this->paymentMethod === 'cash' ? 1 : 2;
         $queueNumber = $this->getNextQueueNumber();
 
+        // Better sequential order number
+        $todayStr = now()->format('Ymd');
+        $lastOrderToday = Order::whereDate('created_at', today())
+            ->orderBy('id', 'desc')
+            ->first();
+        $nextSeq = 1;
+        if ($lastOrderToday) {
+            $parts = explode('-', $lastOrderToday->order_number);
+            if (count($parts) === 3) {
+                $nextSeq = intval($parts[2]) + 1;
+            }
+        }
+        $orderNumber = 'ORD-' . $todayStr . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+
         $order = Order::create([
-            'order_number' => 'ORD-'.strtoupper(Str::random(8)),
+            'order_number' => $orderNumber,
             'table_id' => $this->orderType === 'dine-in' ? $this->selectedTableId : null,
             'customer_name' => $this->customerName ?: 'Guest',
             'order_type' => $this->orderType,
@@ -225,8 +311,9 @@ class PosTerminal extends Component
             'queue_number' => $queueNumber,
             'subtotal_price' => $this->subtotal,
             'tax_amount' => $this->taxAmount,
-            'service_charge_amount' => 0,
-            'discount_amount' => 0,
+            'service_charge_amount' => $this->serviceChargeAmount,
+            'discount_amount' => $this->discountAmount,
+            'discount_code' => $this->appliedDiscount['code'] ?? null,
             'total_price' => $this->total,
         ]);
 
@@ -238,6 +325,12 @@ class PosTerminal extends Component
                 'price' => $item['price'],
                 'notes' => null,
             ]);
+
+            // Kurangi stok menu jika tracking stok aktif
+            $menu = Menu::find($item['id']);
+            if ($menu) {
+                $menu->deductStock($item['quantity']);
+            }
         }
 
         if ($this->orderType === 'dine-in' && $table) {
@@ -246,14 +339,25 @@ class PosTerminal extends Component
 
         broadcast(new OrderPlaced($order))->toOthers();
 
+        // Increment discount used count
+        if ($this->appliedDiscount) {
+            $discount = Discount::find($this->appliedDiscount['id']);
+            if ($discount) {
+                $discount->increment('used_count');
+            }
+        }
+
         $this->completedOrder = $order;
         $this->showCheckout = false;
         $this->showSuccess = true;
 
-        // Reset cart
+        // Reset cart and discount
         $this->cart = [];
         $this->selectedTableId = null;
         $this->customerName = '';
+        $this->appliedDiscount = null;
+        $this->discountCode = '';
+        $this->discountError = null;
     }
 
     public function closeSuccess()

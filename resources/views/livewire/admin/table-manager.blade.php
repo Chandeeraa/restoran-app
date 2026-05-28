@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-slate-200 leading-tight">
-            {{ __('Table Management') }}
+            {{ __('Manajemen Meja') }}
         </h2>
     </x-slot>
 
@@ -9,7 +9,7 @@
         <!-- Form Section -->
         <div class="w-full md:w-1/3">
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6 sticky top-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">{{ $isEditMode ? 'Edit Table' : 'Create Table' }}</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">{{ $isEditMode ? 'Edit Meja' : 'Tambah Meja Baru' }}</h3>
                 
                 @if (session()->has('message'))
                     <div class="mb-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm">
@@ -19,8 +19,8 @@
 
                 <form wire:submit.prevent="{{ $isEditMode ? 'update' : 'store' }}">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Table Number</label>
-                        <input type="text" wire:model="table_number" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="e.g. T-01">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Nomor Meja</label>
+                        <input type="text" wire:model="table_number" class="mt-1 block w-full rounded-xl border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Contoh: T-01">
                         @error('table_number') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
@@ -35,12 +35,12 @@
 
                     <div class="flex items-center gap-3">
                         <button type="submit" class="inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                            {{ $isEditMode ? 'Update' : 'Save & Generate QR' }}
+                            {{ $isEditMode ? 'Simpan Perubahan' : 'Simpan & Buat QR' }}
                         </button>
                         
                         @if($isEditMode)
                             <button type="button" wire:click="resetFields" class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 bg-white dark:bg-slate-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-slate-300 shadow-sm hover:bg-gray-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all">
-                                Cancel
+                                Batal
                             </button>
                         @endif
                     </div>
@@ -54,10 +54,10 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-800/50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Table Number</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">QR Code</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Nomor Meja</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Kode QR</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
@@ -89,13 +89,13 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button wire:click="edit({{ $table->id }})" class="text-emerald-600 hover:text-emerald-900 mr-3 transition-colors">Edit</button>
-                                    <button wire:click="delete({{ $table->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
+                                    <button wire:click="delete({{ $table->id }})" wire:confirm="Apakah Anda yakin?" class="text-red-600 hover:text-red-900 transition-colors">Hapus</button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-8 text-center text-gray-500 dark:text-slate-400">
-                                    No tables found. Create a new one!
+                                    Meja tidak ditemukan. Silakan tambahkan meja baru!
                                 </td>
                             </tr>
                         @endforelse

@@ -18,7 +18,7 @@ class ReservationManager extends Component
 
     public function mount()
     {
-        abort_if(auth()->user()->role !== 'admin', 403);
+        abort_if(! in_array(auth()->user()->role, ['admin', 'cashier']), 403);
     }
 
     public function updateStatus($id, $status)
