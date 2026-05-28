@@ -157,6 +157,26 @@ class StatsDashboard extends Component
         return response()->stream($callback, 200, $headers);
     }
 
+    public function getLowStockMenusProperty()
+    {
+        return \App\Models\Menu::where('track_stock', true)
+            ->orderBy('stock', 'asc')
+            ->limit(5)
+            ->get();
+    }
+
+    public function restockMenu($menuId)
+    {
+        $menu = \App\Models\Menu::find($menuId);
+        if ($menu) {
+            $menu->stock += 50;
+            $menu->is_available = true;
+            $menu->save();
+            
+            $this->dispatch('show-toast', message: "Restok {$menu->name} (+50 Porsi) Berhasil!");
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.stats-dashboard', [
@@ -169,6 +189,7 @@ class StatsDashboard extends Component
             'revenueByCategory' => $this->revenueByCategory,
             'tableStats' => $this->tableStats,
             'recentOrders' => $this->recentOrders,
+            'lowStockMenus' => $this->lowStockMenus,
         ])->layout('layouts.app');
     }
 }

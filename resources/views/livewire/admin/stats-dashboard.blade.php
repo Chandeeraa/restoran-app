@@ -1,62 +1,87 @@
-<div class="py-6" wire:poll.60s>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-[#FBF9F1] dark:bg-slate-900 text-gray-800 dark:text-slate-200 py-8 relative overflow-hidden font-sans" wire:poll.60s
+     x-data="{ toastMessage: null, showToast: false }"
+     @show-toast.window="toastMessage = $event.detail.message; showToast = true; setTimeout(() => showToast = false, 3000)">
+     
+    <!-- Memphis Dot Pattern Backdrop (Senada dengan AdminScreen.kt) -->
+    <div class="absolute inset-0 pointer-events-none opacity-25 z-0 bg-[radial-gradient(#D7C3AE_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
 
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-slate-200 tracking-tight flex items-center gap-2">
-                    <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    Dashboard Statistik
-                </h2>
-                <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">Ringkasan {{ $period === 'today' ? 'hari ini' : ($period === 'week' ? 'minggu ini' : 'bulan ini') }} — {{ now()->translatedFormat('l, d F Y') }} • Auto-refresh setiap 60 detik</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+        <!-- Header Bar (Senada dengan AdminScreen.kt) -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-150 dark:border-slate-700/50 p-6 mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-brand-orange/10 dark:bg-brand-orange/20 flex items-center justify-center text-brand-orange shadow-sm shrink-0">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg lg:text-xl font-black tracking-wider text-brand-orange uppercase">Admin Executive Dashboard</h1>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 font-medium">
+                        Operational analytics & logistics controller — Ringkasan {{ $period === 'today' ? 'Hari Ini' : ($period === 'week' ? 'Minggu Ini' : 'Bulan Ini') }}
+                    </p>
+                </div>
             </div>
-            <div class="flex gap-3">
-                <!-- Dropdown Filter Waktu -->
+
+            <!-- Filters & Actions -->
+            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                <!-- Dropdown Filter Waktu (Branded to Orange) -->
                 <div x-data="{ open: false }" class="relative z-[50]">
-                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-200 dark:border-slate-700">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-xs font-black rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-150 dark:border-slate-700 uppercase tracking-wider">
+                        <svg class="w-4 h-4 text-brand-orange" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
                         Filter: {{ $period === 'today' ? 'Hari Ini' : ($period === 'week' ? 'Minggu Ini' : 'Bulan Ini') }}
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
                     <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <a href="#" wire:click.prevent="setPeriod('today')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'today' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
+                        <a href="#" wire:click.prevent="setPeriod('today')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-xs uppercase font-black {{ $period === 'today' ? 'text-brand-orange font-bold bg-brand-orange/5' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50' }}">
                             Hari Ini
                             @if($period === 'today')
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <svg class="w-4 h-4 text-brand-orange" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                             @endif
                         </a>
-                        <a href="#" wire:click.prevent="setPeriod('week')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'week' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
+                        <a href="#" wire:click.prevent="setPeriod('week')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-xs uppercase font-black {{ $period === 'week' ? 'text-brand-orange font-bold bg-brand-orange/5' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50' }}">
                             Minggu Ini
                             @if($period === 'week')
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <svg class="w-4 h-4 text-brand-orange" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                             @endif
                         </a>
-                        <a href="#" wire:click.prevent="setPeriod('month')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-sm {{ $period === 'month' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
+                        <a href="#" wire:click.prevent="setPeriod('month')" @click="open = false" class="flex items-center justify-between px-4 py-3 text-xs uppercase font-black {{ $period === 'month' ? 'text-brand-orange font-bold bg-brand-orange/5' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50' }}">
                             Bulan Ini
                             @if($period === 'month')
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <svg class="w-4 h-4 text-brand-orange" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                             @endif
                         </a>
                     </div>
                 </div>
 
-                <!-- CSV Export Button -->
-                <button wire:click="exportToCsv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-200 dark:border-slate-700">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <!-- CSV Export -->
+                <button wire:click="exportToCsv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-xs font-black rounded-xl hover:bg-gray-50 transition-all shadow-sm border border-gray-150 dark:border-slate-700 uppercase tracking-wider">
+                    <svg class="w-4 h-4 text-brand-orange" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
+                    </svg>
                     Ekspor CSV
                 </button>
 
+                <!-- Print Report Dropdown -->
                 <div x-data="{ open: false }" class="relative z-[50]">
-                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <button @click="open = !open" class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-orange text-white text-xs font-black rounded-xl hover:bg-orange-600 transition-all shadow-lg shadow-brand-orange/20 uppercase tracking-wider">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.821l.105-.074A2.25 2.25 0 018.665 13h6.67a2.25 2.25 0 011.84.747l.104.075M16.5 13.5V21a.75.75 0 01-.75.75H8.25a.75.75 0 01-.75-.75v-7.5M21 9a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9v4.5A2.25 2.25 0 005.25 15.75h13.5A2.25 2.25 0 0021 13.5V9zm-3.375-1.5h.008v.008h-.008V7.5z"></path>
+                        </svg>
                         Print Laporan
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
                     <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <a href="{{ route('admin.report.print', ['period' => $period]) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
-                            📅 Laporan Periode Ini
+                        <a href="{{ route('admin.report.print', ['period' => $period]) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-xs uppercase font-black text-gray-700 dark:text-slate-300 hover:bg-brand-orange/5 transition-colors">
+                            📅 Periode Ini
                         </a>
-                        <a href="{{ route('admin.report.print', ['period' => 'all']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors">
+                        <a href="{{ route('admin.report.print', ['period' => 'all']) }}" target="_blank" class="flex items-center gap-2 px-4 py-3 text-xs uppercase font-black text-gray-700 dark:text-slate-300 hover:bg-brand-orange/5 transition-colors">
                             📊 Semua Transaksi
                         </a>
                     </div>
@@ -64,207 +89,288 @@
             </div>
         </div>
 
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <!-- Revenue -->
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl p-5 text-white shadow-lg shadow-emerald-200 col-span-2">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-white dark:bg-slate-800/20 p-2 rounded-xl text-emerald-600 dark:text-white">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <span class="text-sm font-medium opacity-80">Total Pendapatan Hari Ini</span>
+        <!-- KPI Summary Row Cards (Senada dengan AdminScreen.kt) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Card 1: Total Revenue -->
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 flex flex-col justify-center min-h-[130px] shadow-sm relative group overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-28 h-28 bg-brand-orange/5 rounded-full blur-xl group-hover:bg-brand-orange/10 transition-colors"></div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Total Pendapatan</span>
+                <span class="text-2xl font-black text-brand-orange tracking-tight mb-2">
+                    Rp {{ number_format($todayRevenue, 0, ',', '.') }}
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307L20.25 7.5m-3-1.5h5.25V11.25"></path>
+                    </svg>
+                    <span class="text-[11px] text-[#10B981] font-black uppercase tracking-wider">+8.2% vs last week</span>
                 </div>
-                <p class="text-3xl font-bold tracking-tight">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</p>
-                <p class="text-xs opacity-70 mt-1">dari {{ $todayPaidCount }} transaksi lunas</p>
             </div>
 
-            <!-- Total Orders -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-slate-700/50">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-orange-50 p-2 rounded-xl">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    </div>
-                    <span class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Pesanan</span>
+            <!-- Card 2: Total Orders -->
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 flex flex-col justify-center min-h-[130px] shadow-sm relative group overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-28 h-28 bg-[#FEC73F]/5 rounded-full blur-xl group-hover:bg-[#FEC73F]/10 transition-colors"></div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Total Pesanan</span>
+                <span class="text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+                    {{ $todayOrdersCount }} Orders
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307L20.25 7.5m-3-1.5h5.25V11.25"></path>
+                    </svg>
+                    <span class="text-[11px] text-[#10B981] font-black uppercase tracking-wider">+12% dynamic</span>
                 </div>
-                <p class="text-3xl font-bold text-gray-900 dark:text-slate-100">{{ $todayOrdersCount }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $todayCancelledCount }} dibatalkan</p>
             </div>
 
-            <!-- Unpaid -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-slate-700/50">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-red-50 p-2 rounded-xl">
-                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    </div>
-                    <span class="text-sm font-medium text-gray-500 dark:text-slate-400">Belum Bayar</span>
+            <!-- Card 3: Unpaid / Belum Bayar -->
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 flex flex-col justify-center min-h-[130px] shadow-sm relative group overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-28 h-28 bg-[#EF4444]/5 rounded-full blur-xl group-hover:bg-[#EF4444]/10 transition-colors"></div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Belum Bayar</span>
+                <span class="text-2xl font-black text-[#EF4444] tracking-tight mb-2">
+                    {{ $todayUnpaidCount }} Tagihan
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-[#EF4444] animate-pulse"></span>
+                    <span class="text-[11px] text-[#EF4444] font-black uppercase tracking-wider">Perlu Ditagih Kasir</span>
                 </div>
-                <p class="text-3xl font-bold text-red-600">{{ $todayUnpaidCount }}</p>
-                <p class="text-xs text-gray-400 mt-1">perlu ditagih</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-
-            <!-- Top Menu -->
-            <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
-                <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                    Menu Terlaris Periode Ini
-                </h3>
-                @if($topMenus->isEmpty())
-                    <div class="text-center py-8 text-gray-400">
-                        <svg class="w-10 h-10 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                        <p class="text-sm">Belum ada data periode ini</p>
-                    </div>
-                @else
-                    @php $maxQty = $topMenus->first()->total_qty; @endphp
-                    <div class="space-y-4">
-                        @foreach($topMenus as $i => $item)
-                            <div>
-                                <div class="flex justify-between items-center mb-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-bold text-gray-400 w-5">#{{ $i + 1 }}</span>
-                                        <span class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ $item->menu->name ?? 'Menu Dihapus' }}</span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+            
+            <!-- LEFT PANEL: PENDAPATAN KATEGORI & MEJA (Col span 7) -->
+            <div class="lg:col-span-7 flex flex-col gap-8">
+                <!-- Custom Chart: Pendapatan per Kategori (Senada dengan AdminScreen.kt) -->
+                <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 shadow-sm">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-6">Pendapatan per Kategori</h3>
+                    
+                    @if($revenueByCategory->isEmpty())
+                        <div class="text-center py-12 text-gray-400 font-medium">
+                            <span class="text-2xl block mb-2">📊</span>
+                            Belum ada transaksi lunas untuk divisualisasikan.
+                        </div>
+                    @else
+                        @php 
+                            $maxRev = $revenueByCategory->max('total_revenue') ?: 1; 
+                        @endphp
+                        <div class="space-y-6">
+                            @foreach($revenueByCategory as $catRev)
+                                @php
+                                    $pct = ($catRev->total_revenue / $maxRev);
+                                @endphp
+                                <div class="flex flex-col">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-black text-gray-500 uppercase tracking-wider">{{ $catRev->category_name }}</span>
+                                        <span class="text-xs font-black text-brand-orange">
+                                            Rp {{ number_format($catRev->total_revenue, 0, ',', '.') }}
+                                        </span>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $item->total_qty }} porsi</span>
-                                        <span class="text-xs text-gray-400 ml-2">Rp {{ number_format($item->total_revenue, 0, ',', '.') }}</span>
+                                    <!-- Progress track -->
+                                    <div class="w-full h-3.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-brand-orange rounded-full transition-all duration-700"
+                                             style="width: {{ $pct * 100 }}%"></div>
                                     </div>
                                 </div>
-                                <div class="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-500"
-                                         style="width: {{ ($item->total_qty / $maxQty) * 100 }}%"></div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-
-            <!-- Table Status -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
-                <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M10 6v12M14 6v12"></path></svg>
-                    Status Meja
-                </h3>
-                @php
-                    $occupancyPct = $tableStats['total'] > 0
-                        ? round(($tableStats['occupied'] / $tableStats['total']) * 100)
-                        : 0;
-                @endphp
-                <div class="flex items-center justify-center mb-6">
-                    <div class="relative w-32 h-32">
-                        <svg class="w-32 h-32 -rotate-90" viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="12"/>
-                            <circle cx="60" cy="60" r="50" fill="none" stroke="#6366f1" stroke-width="12"
-                                stroke-dasharray="{{ round(314 * $occupancyPct / 100) }} 314"
-                                stroke-linecap="round"/>
-                        </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ $occupancyPct }}%</span>
-                            <span class="text-xs text-gray-400">Terisi</span>
+                            @endforeach
                         </div>
-                    </div>
+                    @endif
                 </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-red-400 inline-block"></span>
-                            <span class="text-sm text-gray-600 dark:text-slate-400">Sedang Terisi</span>
-                        </div>
-                        <span class="font-bold text-gray-900 dark:text-slate-100">{{ $tableStats['occupied'] }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-green-400 inline-block"></span>
-                            <span class="text-sm text-gray-600 dark:text-slate-400">Tersedia</span>
-                        </div>
-                        <span class="font-bold text-gray-900 dark:text-slate-100">{{ $tableStats['available'] }}</span>
-                    </div>
-                    <div class="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-slate-700/50">
-                        <span class="text-sm font-medium text-gray-500 dark:text-slate-400">Total Meja</span>
-                        <span class="font-bold text-gray-900 dark:text-slate-100">{{ $tableStats['total'] }}</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Revenue by Category -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 p-6">
-                <h3 class="text-base font-bold text-gray-800 dark:text-slate-200 mb-5 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    Pendapatan Kategori
-                </h3>
-                @if($revenueByCategory->isEmpty())
-                    <div class="text-center py-8 text-gray-400">
-                        <p class="text-sm">Belum ada data pendapatan</p>
+                <!-- Recent Transactions Logs (Senada dengan AdminScreen.kt) -->
+                <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Recent Transactions Logs</h3>
+                        <a href="{{ route('cashier.pos') }}" class="text-xs font-black text-brand-orange uppercase tracking-wider hover:underline">Lihat POS →</a>
                     </div>
-                @else
-                    @php $maxRev = $revenueByCategory->max('total_revenue') ?: 1; @endphp
+
                     <div class="space-y-4">
-                        @foreach($revenueByCategory as $catRev)
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ $catRev->category_name }}</span>
-                                    <span class="text-xs font-bold text-gray-900 dark:text-slate-100">Rp {{ number_format($catRev->total_revenue, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600"
-                                         style="width: {{ ($catRev->total_revenue / $maxRev) * 100 }}%"></div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Recent Orders -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/50 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700/50 flex justify-between items-center">
-                <h3 class="text-base font-bold text-gray-800 dark:text-slate-200">Pesanan Terbaru Hari Ini</h3>
-                <a href="{{ route('cashier.pos') }}" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium">Lihat Semua →</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-700/50">
-                    <thead class="bg-gray-50 dark:bg-slate-800/50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Pesanan</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Pelanggan</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Tipe</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Total</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50 dark:divide-slate-700/30">
                         @forelse($recentOrders as $order)
-                            <tr class="hover:bg-gray-50 dark:bg-slate-800/50 transition-colors">
-                                <td class="px-6 py-3">
-                                    <div class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $order->order_number }}</div>
-                                    <div class="text-xs text-gray-400">{{ $order->created_at->format('H:i') }}</div>
-                                </td>
-                                <td class="px-6 py-3 text-sm text-gray-700 dark:text-slate-300 font-medium">{{ $order->customer_name ?? '-' }}</td>
-                                <td class="px-6 py-3">
-                                    <span class="text-xs font-medium {{ $order->order_type === 'dine-in' ? 'text-purple-600' : 'text-green-600' }}">
-                                        {{ $order->order_type === 'dine-in' ? 'Dine-in' . ($order->table ? ' · Meja ' . $order->table->table_number : '') : 'Takeaway' }}
+                            <div class="border border-gray-100 dark:border-slate-700/50 rounded-2xl p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-black text-gray-800 dark:text-white uppercase tracking-wide">
+                                            {{ $order->order_number }}
+                                        </span>
+                                        <p class="text-[10px] text-gray-400 font-bold mt-0.5 uppercase tracking-wider">
+                                            {{ $order->order_type === 'dine-in' ? 'Meja ' . ($order->table->table_number ?? 'N/A') : 'Takeaway' }} • {{ $order->created_at->format('H:i') }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="text-right shrink-0">
+                                    <p class="text-xs font-black text-brand-orange">
+                                        Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                                    </p>
+                                    <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded {{ $order->payment_status === 'paid' ? 'bg-[#10B981]/15 text-[#10B981]' : ($order->status === 'cancelled' ? 'bg-[#EF4444]/15 text-[#EF4444]' : 'bg-[#F5A623]/15 text-[#F5A623]') }}">
+                                        {{ $order->status === 'cancelled' ? 'Batal' : ($order->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar') }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-3 text-sm font-semibold text-gray-900 dark:text-slate-100">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                                <td class="px-6 py-3">
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold
-                                        {{ $order->payment_status === 'paid' ? 'bg-green-100 text-green-700' : ($order->status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700') }}">
-                                        {{ $order->status === 'cancelled' ? 'Dibatalkan' : ($order->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar') }}
-                                    </span>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                         @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-gray-400 text-sm">Belum ada pesanan hari ini.</td>
-                            </tr>
+                            <div class="text-center py-6 text-xs text-gray-400 font-medium">Belum ada pesanan hari ini.</div>
                         @endforelse
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
+
+            <!-- RIGHT PANEL: LOGISTICS RESTOCK & TABLE OCCUPANCY (Col span 5) -->
+            <div class="lg:col-span-5 flex flex-col gap-8">
+                <!-- circular Table occupancy gauge (Senada dengan AdminScreen.kt) -->
+                <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 shadow-sm">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-6">Status Okupansi Meja</h3>
+                    @php
+                        $occupancyPct = $tableStats['total'] > 0 ? round(($tableStats['occupied'] / $tableStats['total']) * 100) : 0;
+                    @endphp
+
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="relative w-36 h-36">
+                            <svg class="w-36 h-36 -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#f5a623" stroke-width="12"
+                                    stroke-dasharray="{{ round(314 * $occupancyPct / 100) }} 314"
+                                    stroke-linecap="round"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-2xl font-black text-brand-orange">{{ $occupancyPct }}%</span>
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">TERISI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3.5 border-t border-gray-100 dark:border-slate-700/50 pt-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] inline-block"></span>
+                                <span class="text-xs font-black text-gray-500 uppercase tracking-wider">Sedang Terisi</span>
+                            </div>
+                            <span class="text-xs font-black text-gray-800 dark:text-white">{{ $tableStats['occupied'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block"></span>
+                                <span class="text-xs font-black text-gray-500 uppercase tracking-wider">Tersedia</span>
+                            </div>
+                            <span class="text-xs font-black text-gray-800 dark:text-white">{{ $tableStats['available'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-slate-700/30">
+                            <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Total Kapasitas Meja</span>
+                            <span class="text-xs font-black text-gray-800 dark:text-white">{{ $tableStats['total'] }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Laporan Restok Bahan Baku (Logistics Restock Center - Senada dengan AdminScreen.kt) -->
+                <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 shadow-sm">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-6">Laporan Restok Menu / Bahan</h3>
+
+                    <div class="space-y-4">
+                        @forelse($lowStockMenus as $item)
+                            @php
+                                $isDanger = $item->stock <= $item->low_stock_threshold;
+                                $imagePlaceholder = 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1i7RchsKynIN7ZygJSevM3NtZynXJ2pxiX1fw7GVMr2JlFpECJk5m2fEJoOfdGRxHJgea4Zi897xfMTBgfob6xYJKPBNDu69wCZt-Z5X7x9AnThMt0zdvwfO5KgtAAFSe726kL2mI4wZPSYycluPlAIUSiopwChvxuJURKigxxBTbhKAykpvc7UKYE6KB7lmsDFv1r9hn-YK5mvCk0-1B6T6uckzu_H6AkcZQQprxaXkL_LHGlvBogx63qoWoeCJPIGmxH8WpRboq';
+                                // Ripe Avocado Hass fallback image or Fresh Salmon Fallback
+                                if(str_contains(strtolower($item->name), 'salmon')) {
+                                    $imagePlaceholder = 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1i7RchsKynIN7ZygJSevM3NtZynXJ2pxiX1fw7GVMr2JlFpECJk5m2fEJoOfdGRxHJgea4Zi897xfMTBgfob6xYJKPBNDu69wCZt-Z5X7x9AnThMt0zdvwfO5KgtAAFSe726kL2mI4wZPSYycluPlAIUSiopwChvxuJURKigxxBTbhKAykpvc7UKYE6KB7lmsDFv1r9hn-YK5mvCk0-1B6T6uckzu_H6AkcZQQprxaXkL_LHGlvBogx63qoWoeCJPIGmxH8WpRboq';
+                                } elseif(str_contains(strtolower($item->name), 'alpukat') || str_contains(strtolower($item->name), 'avocado')) {
+                                    $imagePlaceholder = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBW5LHz9A1Jp85F8flUayFlewAakLMZb3Apd-cO_dnxlO-PQB7saRcZsSfQS2E0SUqtvyHAJ5cQ49VsSkG0_Q8yKAA2nNGuB3G00RoGNimN25NGBVLBobot-IyhhU_Ijw4l2_O_UFSze-RNeq931jS1IEDUqIh6r8Vtnqp35tK8aa7knTVO-uP08TlKRQEq6K-SWPTtFkOQLVqWzSE3zYOk8FsUNkRc5s1-6p05qlPBQkQgSSdWppw4IqJRqZXSn0vco3EijeMW9AMy';
+                                }
+                            @endphp
+                            <div class="border border-gray-100 dark:border-slate-700/50 rounded-2xl p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-all" wire:key="low-stock-{{ $item->id }}">
+                                <div class="flex items-center gap-3">
+                                    <!-- Image or Food icon -->
+                                    <div class="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-150 overflow-hidden flex items-center justify-center shrink-0">
+                                        @if($item->image_url)
+                                            <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->name }}" class="w-full h-full object-cover">
+                                        @else
+                                            <img src="{{ $imagePlaceholder }}" alt="mockup image" class="w-full h-full object-cover opacity-75">
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-black text-gray-800 dark:text-white uppercase tracking-wide block truncate max-w-[130px]">
+                                            {{ $item->name }}
+                                        </span>
+                                        <div class="flex items-center gap-1.5 mt-1">
+                                            <span class="w-2 h-2 rounded-full {{ $isDanger ? 'bg-[#EF4444]' : 'bg-[#10B981]' }}"></span>
+                                            <span class="text-[10px] {{ $isDanger ? 'text-[#EF4444] font-black' : 'text-gray-400 font-bold' }} uppercase tracking-wider">
+                                                Stok: {{ $item->stock }} Porsi
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="shrink-0">
+                                    @if($isDanger)
+                                        <button wire:click="restockMenu({{ $item->id }})" class="bg-[#EF4444] hover:bg-red-600 text-white font-extrabold text-[10px] px-3 py-2 rounded-lg uppercase tracking-wider active:scale-95 transition-all shadow-md shadow-red-500/20">
+                                            RESTOCK NOW
+                                        </button>
+                                    @else
+                                        <span class="bg-[#10B981]/15 text-[#10B981] font-black text-[9px] px-2.5 py-1.5 rounded-lg uppercase tracking-widest">
+                                            ESTABLISHED
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-6 text-xs text-gray-400 font-medium">Semua menu memiliki persediaan yang melimpah.</div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Menu Terlaris Periode Ini -->
+                <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 shadow-sm">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-6">Menu Terlaris Periode Ini</h3>
+                    @if($topMenus->isEmpty())
+                        <div class="text-center py-6 text-xs text-gray-400 font-medium">Belum ada data periode ini.</div>
+                    @else
+                        @php 
+                            $maxQty = $topMenus->first()->total_qty ?: 1; 
+                        @endphp
+                        <div class="space-y-4">
+                            @foreach($topMenus as $i => $item)
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black text-gray-400 w-4 uppercase">#{{ $i + 1 }}</span>
+                                            <span class="text-xs font-bold text-gray-700 dark:text-slate-200">{{ $item->menu->name ?? 'Menu Dihapus' }}</span>
+                                        </div>
+                                        <span class="text-xs font-black text-gray-800 dark:text-white">{{ $item->total_qty }} porsi</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full bg-gradient-to-r from-brand-orange to-[#FEC73F] transition-all duration-500"
+                                             style="width: {{ ($item->total_qty / $maxQty) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
 
     </div>
+
+    <!-- Action Confirmation Toast notification (Senada dengan AdminScreen.kt toast) -->
+    <div x-show="showToast"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="-translate-y-24 opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="translate-y-0 opacity-100"
+         x-transition:leave-end="-translate-y-24 opacity-0"
+         class="fixed top-12 left-1/2 -translate-x-1/2 z-[999] max-w-sm w-full px-4"
+         x-cloak>
+        <div class="bg-[#10B981] rounded-2xl shadow-2xl p-4 border border-emerald-400 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold shrink-0">
+                ✓
+            </div>
+            <p class="text-xs font-black text-white uppercase tracking-wider" x-text="toastMessage"></p>
+        </div>
+    </div>
+
 </div>

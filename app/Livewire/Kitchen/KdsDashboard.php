@@ -20,7 +20,7 @@ class KdsDashboard extends Component
     {
         // Load pending and preparing orders, ordered by created_at ascending (oldest first)
         $this->orders = Order::with('items.menu')
-            ->whereIn('status', ['pending', 'cooking'])
+            ->whereIn('status', ['pending', 'cooking', 'ready'])
             ->orderBy('created_at', 'asc')
             ->get();
     }
