@@ -1,52 +1,82 @@
-<div class="min-h-screen bg-[#131e2b] w-full py-8 text-slate-200" wire:poll.5s>
-    <div class="max-w-2xl mx-auto px-4 sm:px-6">
+<div class="min-h-screen w-full relative py-8 px-4 sm:px-6 overflow-hidden bg-brand-cream dark:bg-slate-900 text-gray-900 dark:text-slate-100 transition-colors duration-300" wire:poll.5s x-data="{ showQr: false, waiterFeedback: null }">
+    
+    <!-- Memphis Dot Pattern Backdrop (Senada dengan TrackScreen.kt) -->
+    <div class="absolute inset-0 pointer-events-none opacity-25 z-0 bg-[radial-gradient(#835500_1.5px,transparent_1.5px)] [background-size:20px_20px]"></div>
 
-        {{-- Header --}}
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 shadow-lg shadow-emerald-600/30 mb-4 animate-fade-in">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    <!-- Background decorative blur circles -->
+    <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand-orange/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-24 -left-24 w-96 h-96 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-2xl mx-auto">
+        
+        {{-- App Bar / Header (Senada dengan TrackScreen.kt) --}}
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-2">
+                <svg class="w-6 h-6 text-brand-orange drop-shadow-sm shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.905 0-5.64-.73-8.028-2.018m16.056 0A11.95 11.95 0 0012 3m0 0a11.95 11.95 0 00-8.028 2.018"></path>
                 </svg>
+                <h1 class="text-lg md:text-xl font-black text-brand-orange tracking-tight uppercase">Lacak {{ $order->order_number }}</h1>
             </div>
-            <h1 class="text-2xl font-bold text-white">Tracking Pesanan</h1>
-            @if($order->customer_name)
-                <p class="mt-1 text-slate-400">Halo, <span class="text-emerald-400 font-bold">{{ $order->customer_name }}</span>! 👋</p>
-            @endif
-            <p class="mt-1 text-xs text-slate-500 font-mono tracking-wider">{{ $order->order_number }}</p>
+
+            <div class="px-4 py-1.5 bg-brand-orange/10 rounded-full border border-brand-orange/20 shadow-sm shrink-0">
+                <span class="text-xs font-black text-brand-orange uppercase">
+                    Meja {{ $order->table ? $order->table->table_number : 'Takeaway' }}
+                </span>
+            </div>
         </div>
 
         @if($order->status === 'cancelled')
-            {{-- DIBATALKAN --}}
-            <div class="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 text-center mb-6">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-500/20 mb-4">
-                    <svg class="h-8 w-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            {{-- DIBATALKAN STATE --}}
+            <div class="bg-red-500/10 border-2 border-red-500 rounded-[28px] p-8 text-center mb-6 shadow-lg shadow-red-500/5">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-red-500/20 mb-4 border border-red-500/30">
+                    <svg class="h-8 w-8 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-red-400 mb-2">Pesanan Dibatalkan</h2>
-                <p class="text-red-300 text-sm">Mohon maaf, pesanan Anda dibatalkan. Silakan hubungi kasir.</p>
+                <h2 class="text-xl font-black text-red-500 mb-2">Pesanan Anda Dibatalkan</h2>
+                <p class="text-red-600 dark:text-red-300 text-xs font-medium max-w-sm mx-auto leading-relaxed">Mohon maaf, pesanan Anda dibatalkan oleh pihak restoran. Silakan temui kasir di counter pembayaran.</p>
             </div>
-
         @else
 
-            {{-- NOTIFIKASI READY (untuk makanan) --}}
-            @if($order->status === 'ready' && $hasFood)
-                <div class="mb-6 bg-emerald-500/10 border-2 border-emerald-500 rounded-3xl p-5 text-center shadow-lg animate-pulse">
-                    <div class="text-4xl mb-2">🔔</div>
-                    <h2 class="text-xl font-bold text-emerald-400">Pesanan Anda Siap Diambil!</h2>
-                    <p class="text-emerald-300 text-sm mt-1 mb-4">Silakan menuju counter untuk mengambil pesanan.</p>
+            {{-- NOTIFIKASI READY DENGAN ACTION BUTTON --}}
+            @if($order->status === 'ready')
+                <div class="mb-6 bg-brand-green/10 border-2 border-brand-green rounded-[28px] p-6 text-center shadow-lg shadow-brand-green/5 animate-pulse">
+                    <div class="text-4xl mb-3">🔔</div>
+                    <h2 class="text-lg font-black text-brand-green uppercase">Pesanan Anda Siap Diambil!</h2>
+                    <p class="text-xs text-green-700 dark:text-emerald-300 font-semibold mt-1 mb-5">Silakan tunjukkan struk digital atau nomor antrean ke staf saji.</p>
 
                     @if($order->payment_status === 'paid')
-                        <button wire:click="completeOrder" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-600/30 transition-colors animate-none">
-                            <i class="fas fa-check-circle mr-1"></i> Saya Sudah Ambil Pesanan
+                        <button wire:click="completeOrder" class="w-full py-3.5 bg-brand-green hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-brand-green/20 transition-all active:scale-95 text-xs uppercase tracking-wider">
+                            <i class="fas fa-check-circle mr-1.5"></i> Saya Sudah Ambil Pesanan
                         </button>
+                    @else
+                        <div class="py-2.5 px-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-[11px] font-black text-yellow-600 dark:text-yellow-400 uppercase">
+                            Silakan selesaikan pembayaran di kasir terlebih dahulu
+                        </div>
                     @endif
                 </div>
             @endif
 
-            {{-- TIMELINE --}}
-            <div class="bg-[#1a2636] border border-white/5 rounded-3xl p-6 sm:p-8 mb-6">
+            {{-- 1. Estimasi Waktu Tiba (Time Estimate Widget) --}}
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 md:p-8 text-center mb-6 shadow-sm">
+                <span class="text-[9px] font-black tracking-widest text-gray-400 dark:text-slate-500 block mb-2 uppercase">ESTIMASI PESANAN TIBA</span>
+                @php
+                    $minutesText = match ($order->status) {
+                        'pending' => '~15 Menit',
+                        'cooking' => '~12 Menit',
+                        'ready' => 'Pesanan Siap!',
+                        default => 'Diterima!',
+                    };
+                @endphp
+                <h2 class="text-3xl font-black text-brand-orange tracking-tight mb-2">{{ $minutesText }}</h2>
+                <div class="flex items-center justify-center gap-1.5 text-xs text-gray-500 dark:text-slate-400 font-semibold">
+                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Dipesan pukul {{ $order->created_at->format('H:i') }} WIB</span>
+                </div>
+            </div>
 
+            {{-- 2. Stepper Progress Tracker (Senada dengan TrackScreen.kt) --}}
+            <div class="bg-white/95 dark:bg-slate-800/95 rounded-[28px] border border-gray-150 dark:border-slate-700/50 p-6 mb-6 shadow-sm">
                 @php
                     $statusMap = [
                         'pending'   => 0,
@@ -56,164 +86,175 @@
                         'completed' => 3,
                     ];
                     $currentIdx = $statusMap[$order->status] ?? 0;
-
-                    $stages = [
-                        ['label' => 'Diterima',  'sub' => 'Masuk ke dapur',  'icon' => '📋'],
-                        ['label' => 'Dimasak',   'sub' => 'Sedang disiapkan', 'icon' => '👨‍🍳'],
-                        ['label' => 'Siap!',     'sub' => 'Siap untuk diambil','icon' => '✅'],
-                        ['label' => 'Selesai',   'sub' => 'Selamat menikmati','icon' => '🍽️'],
-                    ];
                 @endphp
 
-                {{-- Progress bar --}}
-                <div class="relative h-2 bg-[#0f1923] rounded-full mb-8 overflow-hidden">
-                    <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-700"
-                         style="width: {{ $currentIdx > 0 ? ($currentIdx / (count($stages) - 1)) * 100 : 5 }}%">
-                    </div>
-                </div>
+                <!-- Stepper Circles -->
+                <div class="flex justify-between items-center relative mb-6 px-2">
+                    @php
+                        $stages = [
+                            ['name' => 'Diterima', 'desc' => 'Dapur menerima order', 'icon' => '📋'],
+                            ['name' => 'Dimasak', 'desc' => 'Koki sedang memasak', 'icon' => '👨‍🍳'],
+                            ['name' => 'Siap', 'desc' => 'Silakan diambil', 'icon' => '🔔'],
+                            ['name' => 'Selesai', 'desc' => 'Nikmati hidangan', 'icon' => '🍽️']
+                        ];
+                    @endphp
 
-                {{-- Stage icons --}}
-                <div class="grid grid-cols-4 gap-2">
                     @foreach($stages as $i => $stage)
                         @php
-                            $done   = $i < $currentIdx;
+                            $done = $i < $currentIdx;
                             $active = $i === $currentIdx;
                             $future = $i > $currentIdx;
+
+                            $stepColor = match(true) {
+                                $done => 'bg-brand-green border-transparent text-white',
+                                $active => 'bg-brand-orange border-transparent text-white ring-4 ring-brand-orange/20 scale-105',
+                                default => 'bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500'
+                            };
+                            
+                            $labelColor = match(true) {
+                                $done => 'text-brand-green',
+                                $active => 'text-brand-orange',
+                                default => 'text-gray-400 dark:text-slate-500'
+                            };
                         @endphp
-                        <div class="flex flex-col items-center">
-                            <div class="relative w-12 h-12 rounded-full flex items-center justify-center text-xl mb-2 transition-all duration-300
-                                {{ $active ? 'bg-emerald-600 shadow-lg shadow-emerald-600/30 ring-4 ring-emerald-500/20 scale-110'
-                                   : ($done ? 'bg-emerald-500/10 text-emerald-400'
-                                   : 'bg-[#0f1923] opacity-40') }}">
-                                {{ $stage['icon'] }}
+                        <div class="flex flex-col items-center z-10 w-16">
+                            <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-black border-2 transition-all duration-300 {{ $stepColor }}">
                                 @if($done)
-                                    <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 flex items-center justify-center">
-                                        <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </span>
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                                @else
+                                    <span class="text-base leading-none">{{ $stage['icon'] }}</span>
                                 @endif
                             </div>
-                            <span class="text-xs font-semibold text-center leading-tight
-                                {{ $active ? 'text-emerald-400' : ($done ? 'text-slate-300' : 'text-slate-500') }}">
-                                {{ $stage['label'] }}
-                            </span>
-                            <span class="text-[10px] text-slate-500 text-center hidden sm:block leading-tight mt-0.5">
-                                {{ $stage['sub'] }}
+                            <span class="text-[10px] font-black mt-2 text-center tracking-tight uppercase leading-none {{ $labelColor }}">
+                                {{ $stage['name'] }}
                             </span>
                         </div>
                     @endforeach
                 </div>
 
-                {{-- Status message --}}
-                <div class="mt-8 text-center">
-                    @if($order->status === 'pending')
-                        <div class="inline-flex items-center gap-2 bg-[#0f1923] text-yellow-400 border border-white/5 rounded-2xl px-5 py-3">
-                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                            <span class="font-semibold text-sm">Menunggu konfirmasi dapur...</span>
-                        </div>
-
-                    @elseif($order->status === 'cooking')
-                        <div class="inline-flex items-center gap-2 bg-[#0f1923] text-orange-400 border border-white/5 rounded-2xl px-5 py-3">
-                            <span class="text-xl animate-bounce inline-block">🔥</span>
-                            <span class="font-semibold text-sm">Koki sedang memasak pesanan Anda!</span>
-                        </div>
-
-                    @elseif($order->status === 'ready')
-                        <div class="inline-flex items-center gap-2 bg-[#0f1923] text-emerald-400 border border-white/5 rounded-2xl px-5 py-3">
-                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <span class="font-semibold text-sm">Pesanan Anda sudah siap! Silakan diambil. 🎉</span>
-                        </div>
-
-                    @elseif(in_array($order->status, ['served', 'completed']))
-                        <div class="inline-flex items-center gap-2 bg-[#0f1923] text-emerald-400 border border-white/5 rounded-2xl px-5 py-3">
-                            <span class="text-xl">🙏</span>
-                            <span class="font-semibold text-sm">Selamat menikmati! Terima kasih. 😊</span>
-                        </div>
-                    @endif
+                <!-- Info Box Alert Message -->
+                @php
+                    $alertMessage = match ($order->status) {
+                        'pending' => 'Pesanan Anda berhasil dikirim ke dapur. Menunggu persetujuan koki.',
+                        'cooking' => 'Chef sedang menyiapkan menu pesanan Anda dengan bahan segar terbaik.',
+                        'ready' => 'Pesanan Anda sudah SIAP! Silakan ambil atau panggil pelayan untuk mengantarkannya.',
+                        default => 'Pesanan Anda selesai! Selamat menikmati hidangan spesial dari YON RESTO.'
+                    };
+                @endphp
+                <div class="flex items-start gap-3 bg-brand-orange/5 border border-brand-orange/20 rounded-2xl p-4">
+                    <svg class="w-5 h-5 text-brand-orange shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path></svg>
+                    <p class="text-[11px] font-bold text-gray-700 dark:text-slate-300 leading-normal">{{ $alertMessage }}</p>
                 </div>
             </div>
 
-            {{-- Rincian pesanan --}}
-            <div class="bg-[#1a2636] border border-white/5 rounded-3xl overflow-hidden mb-6">
-                <div class="p-5 border-b border-white/5 flex items-center justify-between">
-                    <h3 class="font-bold text-white">Rincian Pesanan</h3>
-                    <span class="text-xs px-3 py-1 rounded-full font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        {{ $order->order_type === 'dine-in'
-                            ? '🪑 Meja ' . ($order->table->table_number ?? '-')
-                            : '🥡 Takeaway' }}
+            {{-- 3. Rincian Pesanan (Order Details Card) --}}
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] border border-gray-150 dark:border-slate-700/50 overflow-hidden mb-6 shadow-sm">
+                <div class="p-5 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <h3 class="font-extrabold text-sm text-gray-900 dark:text-white uppercase tracking-tight">Rincian Hidangan</h3>
+                    <span class="text-[10px] px-3 py-1 rounded-full font-black {{ $order->order_type === 'dine-in' ? 'bg-brand-orange/10 text-brand-orange' : 'bg-brand-green/10 text-brand-green' }} uppercase">
+                        {{ $order->order_type === 'dine-in' ? '🪑 Makan Di Tempat' : '🥡 Bawa Pulang' }}
                     </span>
                 </div>
-                <ul class="divide-y divide-white/5">
+
+                <ul class="divide-y divide-gray-100 dark:divide-slate-700">
                     @foreach($order->items as $item)
-                        <li class="px-5 py-4 flex items-center justify-between">
-                            <div class="flex items-start gap-3">
-                                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/20">
-                                    {{ $item->quantity }}
+                        <li class="px-5 py-4 flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center text-xs font-black border border-brand-orange/20 shadow-sm">
+                                    {{ $item->quantity }}x
                                 </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-white">
-                                        {{ $item->menu->name ?? 'Menu Dihapus' }}
+                                    <p class="text-sm font-extrabold text-gray-900 dark:text-white">
+                                        {{ $item->menu->name ?? 'Unknown Menu' }}
                                     </p>
-                                    @if($item->menu && $item->menu->category)
-                                        <span class="text-[10px] {{ $item->menu->category->is_drink ? 'text-emerald-400' : 'text-orange-400' }}">
-                                            {{ $item->menu->category->is_drink ? '🧃 Minuman' : '🍽️ Makanan' }}
-                                        </span>
-                                    @endif
                                     @if($item->notes)
-                                        <p class="text-xs text-slate-500 mt-0.5">📝 {{ $item->notes }}</p>
+                                        <p class="text-[10px] text-red-500 font-bold mt-1 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 px-2 py-0.5 rounded inline-block">📝 {{ $item->notes }}</p>
                                     @endif
                                 </div>
                             </div>
-                            <span class="text-sm font-semibold text-slate-300">
+                            <span class="text-sm font-black text-gray-800 dark:text-slate-300">
                                 Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
                             </span>
                         </li>
                     @endforeach
                 </ul>
-                <div class="px-5 py-4 bg-[#0f1923] border-t border-white/5">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-slate-400 font-medium">Total Tagihan</span>
-                        <span class="text-xl font-bold text-emerald-400">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+
+                <div class="p-5 bg-gray-50 dark:bg-slate-800/40 border-t border-gray-100 dark:border-slate-700 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-gray-500 dark:text-slate-400 font-medium">Subtotal</span>
+                        <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($order->subtotal_price, 0, ',', '.') }}</span>
                     </div>
                     @if($order->discount_amount > 0)
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-xs text-slate-500">Diskon ({{ $order->discount_code }})</span>
-                            <span class="text-xs font-semibold text-emerald-400">-Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</span>
+                        <div class="flex justify-between text-xs text-red-500">
+                            <span>Diskon ({{ $order->discount_code }})</span>
+                            <span class="font-bold">-Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                         </div>
                     @endif
-                    <div class="flex justify-between items-center mt-1">
-                        <span class="text-xs text-slate-500">Status Pembayaran</span>
-                        <span class="text-xs font-bold {{ $order->payment_status === 'paid' ? 'text-emerald-400' : 'text-red-400' }}">
-                            {{ $order->payment_status === 'paid' ? '✅ LUNAS' : '⏳ BELUM DIBAYAR' }}
+                    @if($order->service_charge_amount > 0)
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-slate-400">
+                            <span>Service Charge (5%)</span>
+                            <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($order->service_charge_amount, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+                    @if($order->tax_amount > 0)
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-slate-400">
+                            <span>Pajak (Tax 10%)</span>
+                            <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($order->tax_amount, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+
+                    <div class="flex justify-between items-center pt-2.5 mt-2 border-t border-gray-100 dark:border-slate-700">
+                        <span class="text-sm font-bold text-gray-900 dark:text-white">Total Tagihan</span>
+                        <span class="text-lg font-black text-brand-orange">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2.5">
+                        <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">Status Pembayaran</span>
+                        <span class="text-[10px] font-black px-2.5 py-1 rounded-full {{ $order->payment_status === 'paid' ? 'bg-brand-green/10 text-brand-green' : 'bg-red-500/10 text-red-500' }} uppercase">
+                            {{ $order->payment_status === 'paid' ? 'LUNAS' : 'Belum Lunas' }}
                         </span>
                     </div>
                 </div>
             </div>
 
-            {{-- Tombol Batalkan (hanya status pending) --}}
+            {{-- 4. Tombol Aksi Bawah: QR Struk & Panggil Pelayan (Senada dengan TrackScreen.kt) --}}
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <!-- QR STRUK Button -->
+                <button type="button" @click="showQr = true" class="h-28 bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700/50 rounded-3xl shadow-sm flex flex-col items-center justify-center group active:scale-95 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-orange/10 group-hover:bg-brand-orange/20 flex items-center justify-center text-brand-orange transition-colors shadow-sm mb-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5zM16.5 13.5h.008v.008h-.008V13.5zm3 0h.008v.008h-.008V13.5zm-3 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm3-3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm-6-3h.008v.008h-.008V13.5zm-3 3h.008v.008h-.008v-.008zm3 3h.008v.008H13.5v-.008z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest leading-none">QR STRUK</span>
+                </button>
+
+                <!-- CALL WAITER Button -->
+                <button type="button" @click="waiterFeedback = 'Memanggil...'; setTimeout(() => waiterFeedback = 'Tunggu Sebentar', 2000); setTimeout(() => waiterFeedback = null, 3500);" class="h-28 bg-brand-orange hover:bg-orange-500 text-white rounded-3xl shadow-lg shadow-brand-orange/20 flex flex-col items-center justify-center active:scale-95 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-2">
+                        <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest leading-none" x-text="waiterFeedback || 'PANGGIL PELAYAN'"></span>
+                </button>
+            </div>
+
+            {{-- 5. Tombol Pembatalan Mandiri (hanya status pending) --}}
             @if($order->status === 'pending')
                 <div x-data="{ confirm: false }" class="mb-6">
                     <div x-show="!confirm">
                         <button @click="confirm = true"
-                            class="w-full text-center text-red-400 hover:text-red-300 font-medium text-sm border border-red-500/20 hover:border-red-500/40 rounded-2xl py-3 hover:bg-red-500/5 transition-colors">
+                            class="w-full text-center text-red-500 hover:text-red-400 font-extrabold text-xs border-2 border-red-500/20 hover:border-red-500/30 rounded-2xl py-3.5 hover:bg-red-500/5 transition-all uppercase tracking-wider">
                             Batalkan Pesanan
                         </button>
                     </div>
-                    <div x-show="confirm" x-cloak class="bg-red-500/5 border border-red-500/20 rounded-2xl p-5">
-                        <p class="text-sm font-medium text-red-300 mb-4">⚠️ Apakah Anda yakin ingin membatalkan pesanan ini?</p>
+                    <div x-show="confirm" x-cloak class="bg-red-500/5 border-2 border-red-500/20 rounded-[24px] p-5">
+                        <p class="text-xs font-bold text-red-600 dark:text-red-300 mb-4">⚠️ Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.</p>
                         <div class="flex gap-3">
                             <button wire:click="cancelOrder"
-                                class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-xl transition-colors">
+                                class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-xl hover:shadow-lg transition-colors uppercase">
                                 Ya, Batalkan
                             </button>
                             <button @click="confirm = false"
-                                class="flex-1 py-2.5 bg-[#1a2636] border border-white/5 text-slate-300 text-sm font-bold rounded-xl hover:bg-white/5 transition-colors">
-                                Tidak
+                                class="flex-1 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 text-xs font-black rounded-xl hover:bg-gray-50 dark:hover:bg-slate-750 transition-colors uppercase">
+                                Batal
                             </button>
                         </div>
                     </div>
@@ -222,12 +263,36 @@
 
         @endif
 
-        <div class="text-center mt-4">
-            <a href="{{ route('order') }}" class="text-sm text-emerald-400 hover:text-emerald-300 font-medium transition-colors" wire:navigate.hover>
+        {{-- 6. Back Button --}}
+        <div class="text-center mt-6">
+            <a href="{{ route('order') }}" class="text-xs font-black text-brand-orange hover:text-orange-500 transition-colors uppercase tracking-wider" wire:navigate.hover>
                 ← Pesan Menu Lainnya
             </a>
         </div>
 
+    </div>
+
+    <!-- QR Code / E-Struk Modal Sheet -->
+    <div x-show="showQr" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-750 rounded-[2rem] p-6 max-w-xs w-full shadow-2xl text-center"
+             @click.away="showQr = false">
+            <h3 class="font-extrabold text-gray-900 dark:text-white text-base mb-1">E-Struk / QR Pembayaran</h3>
+            <p class="text-[10px] text-gray-400 dark:text-slate-500 mb-6">Tunjukkan QR ini ke kasir untuk pemrosesan pembayaran instan via POS Kasir.</p>
+            
+            <div class="w-48 h-48 bg-white p-3 border-2 border-gray-150 dark:border-slate-700 rounded-2xl shadow-inner mx-auto mb-6 flex items-center justify-center">
+                <!-- Synthesized visual representation of QR code using an interactive SVG or icon -->
+                <i class="bi bi-qr-code text-[140px] text-gray-900 leading-none"></i>
+            </div>
+
+            <div class="bg-brand-orange/10 border border-brand-orange/20 rounded-xl p-3 mb-6">
+                <span class="text-[9px] font-black text-brand-orange uppercase block mb-0.5">KODE STRUK</span>
+                <span class="text-sm font-black text-brand-orange tracking-wider font-mono">{{ $order->order_number }}</span>
+            </div>
+
+            <button type="button" @click="showQr = false" class="w-full py-3 bg-gray-100 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 rounded-xl font-bold text-xs hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors uppercase">
+                Tutup
+            </button>
+        </div>
     </div>
 
     {{-- ============================================================
@@ -248,42 +313,38 @@
 
                 notes.forEach((freq, i) => {
                     setTimeout(() => {
-                        const osc  = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
+                        const osc = ctx.createOscillator();
+                        const gainNode = ctx.createGain();
+                        osc.connect(gainNode);
+                        gainNode.connect(ctx.destination);
                         osc.type = 'sine';
                         osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                        gain.gain.setValueAtTime(0.5, ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-                        osc.start(ctx.currentTime);
-                        osc.stop(ctx.currentTime + 1.2);
-                    }, i * 320);
+                        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.5);
+                    }, i * 200);
                 });
-
-                sessionStorage.setItem(key, '1');
-            } catch(e) {
+                
+                sessionStorage.setItem(key, 'true');
+            } catch (e) {
                 console.warn('Audio play failed:', e);
             }
         }
 
-        // Coba langsung (beberapa browser mengizinkan tanpa interaksi)
+        // Jalankan audio setelah interaksi user atau load halaman
         if (document.readyState === 'complete') {
             playReadySound();
         } else {
             window.addEventListener('load', playReadySound);
         }
-
-        // Fallback: saat user pertama berinteraksi
-        const once = () => {
-            playReadySound();
-            document.removeEventListener('click', once);
-            document.removeEventListener('touchstart', once);
-        };
-        document.addEventListener('click', once, { once: true });
-        document.addEventListener('touchstart', once, { once: true });
     })();
     </script>
     @endif
 
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        [x-cloak] { display: none !important; }
+    </style>
 </div>

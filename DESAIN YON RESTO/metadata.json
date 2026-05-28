@@ -1,0 +1,6 @@
+{
+  "name": "YON RESTO",
+  "description": "Premium restaurant menu, staff POS terminal, order tracking, and live queue status board featuring Modern Fluid-Memphis design.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
